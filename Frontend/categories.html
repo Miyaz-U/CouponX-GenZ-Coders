@@ -3,10 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <title>CouponX - Categories</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
+<body class="bg-gray-50 min-h-screen">
+    <header class="bg-white shadow-sm">
+        <div class="max-w-6xl mx-auto flex items-center justify-between px-6 py-4">
+            <a href="home.html" class="text-xl font-bold text-purple-600">CouponX</a>
+            <nav class="hidden md:flex gap-6 text-sm font-medium text-gray-700">
+                <a href="home.html" class="hover:text-purple-600">Home</a>
+                <a href="shop.html" class="hover:text-purple-600">Shop</a>
+                <a href="categories.html" class="text-purple-600">Categories</a>
+                <a href="deals.html" class="hover:text-purple-600">Deals</a>
+            </nav>
+            <a href="cart.html" class="relative text-gray-700">
+                🛒
+                <span id="cartCount" class="absolute -top-2 -right-3 bg-purple-600 text-white text-xs rounded-full px-1.5">0</span>
+            </a>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-6 py-8">
+        <nav class="text-sm text-gray-500 mb-2">
+            <a href="home.html" class="hover:underline">Home</a> &gt;
+            <span id="breadcrumbCurrent" class="text-purple-600">Categories</span>
+        </nav>
+        <div id="categoriesView">
+            <h1 class="text-2xl font-bold mb-1">All Categories</h1>
+            <p class="text-gray-500 mb-6">Browse products grouped by category to find exactly what you need.</p>
+
+            <p id="loadingMsg" class="text-gray-500">Loading categories...</p>
+            <p id="errorMsg" class="text-red-600 hidden"></p>
+            <div id="categoriesGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"></div>
+        </div>
+        <div id="categoryProductsView" class="hidden">
+            <button id="backToCategoriesBtn" class="text-purple-600 text-sm font-medium mb-4 hover:underline">
+                ← Back to Categories
+            </button>
+            <h1 id="categoryProductsTitle" class="text-2xl font-bold mb-1"></h1>
+            <p id="categoryProductsSubtitle" class="text-gray-500 mb-6"></p>
+            <div id="categoryProductsGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"></div>
+        </div>
+    </main>
     <script src="js/categories.js"></script>
 </body>
 </html>

@@ -3,10 +3,84 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <title>CouponX - Shop</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
+<body class="bg-gray-50 min-h-screen">
+    <header class="bg-white shadow-sm">
+        <div class="max-w-6xl mx-auto flex items-center justify-between px-6 py-4">
+            <a href="home.html" class="text-xl font-bold text-purple-600">CouponX</a>
+            <nav class="hidden md:flex gap-6 text-sm font-medium text-gray-700">
+                <a href="home.html" class="hover:text-purple-600">Home</a>
+                <a href="shop.html" class="text-purple-600">Shop</a>
+                <a href="categories.html" class="hover:text-purple-600">Categories</a>
+                <a href="deals.html" class="hover:text-purple-600">Deals</a>
+            </nav>
+            <a href="cart.html" class="relative text-gray-700">
+                🛒
+                <span id="cartCount" class="absolute -top-2 -right-3 bg-purple-600 text-white text-xs rounded-full px-1.5">0</span>
+            </a>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-6 py-8">
+        <nav class="text-sm text-gray-500 mb-4">
+            <a href="home.html" class="hover:underline">Home</a> &gt;
+            <span class="text-purple-600">Shop</span>
+        </nav>
+
+        <div class="flex flex-col md:flex-row gap-6">
+            <aside class="w-full md:w-56 shrink-0">
+                <div class="bg-white border border-gray-200 rounded-lg p-4">
+                    <h2 class="font-semibold text-gray-800 mb-4">Filters</h2>
+                    <div class="mb-5">
+                        <h3 class="text-xs font-semibold text-gray-500 uppercase mb-2">Category</h3>
+                        <div id="categoryFilters" class="space-y-1 text-sm"></div>
+                    </div>
+
+                    <div class="mb-5">
+                        <h3 class="text-xs font-semibold text-gray-500 uppercase mb-2">Price Range (₹)</h3>
+                        <div class="flex items-center gap-2">
+                            <input type="number" id="minPriceInput" placeholder="Min"
+                                class="w-full border border-gray-300 rounded-md px-2 py-1 text-sm" />
+                            <span class="text-gray-400">-</span>
+                            <input type="number" id="maxPriceInput" placeholder="Max"
+                                class="w-full border border-gray-300 rounded-md px-2 py-1 text-sm" />
+                        </div>
+                    </div>
+
+                    <div class="mb-5">
+                        <h3 class="text-xs font-semibold text-gray-500 uppercase mb-2">Brand</h3>
+                        <div id="brandFilters" class="space-y-1 text-sm"></div>
+                    </div>
+
+                    <button id="clearFiltersBtn" type="button"
+                        class="w-full border border-gray-300 rounded-md py-1.5 text-sm text-gray-600 hover:bg-gray-50">
+                        Clear Filters
+                    </button>
+                </div>
+            </aside>
+
+            <div class="flex-1">
+                <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 mb-4">
+                    <input type="text" id="searchInput" placeholder="Search products..."
+                        class="flex-1 border border-gray-300 rounded-md px-3 py-2 text-sm" />
+                    <select id="sortSelect" class="border border-gray-300 rounded-md px-3 py-2 text-sm">
+                        <option value="featured">Sort by: Featured</option>
+                        <option value="price_asc">Price: Low to High</option>
+                        <option value="price_desc">Price: High to Low</option>
+                        <option value="newest">Newest</option>
+                    </select>
+                </div>
+
+                <p id="resultsCount" class="text-sm text-gray-500 mb-3"></p>
+                <p id="loadingMsg" class="text-gray-500">Loading products...</p>
+                <p id="errorMsg" class="text-red-600 hidden"></p>
+                <p id="noResultsMsg" class="hidden text-gray-500">No products match your filters.</p>
+                <div id="productsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+            </div>
+        </div>
+    </main>
     <script src="js/shop.js"></script>
 </body>
 </html>
