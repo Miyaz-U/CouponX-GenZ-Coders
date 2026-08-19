@@ -1,12 +1,119 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
     <title>CouponX - Deals</title>
+
+    <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-    <script src="js/deals.js"></script>
+
+    <!-- HEADER -->
+
+    <header>
+
+        <div class="logo">
+            CouponX
+        </div>
+
+
+        <nav>
+
+            <a href="index.html">
+                Home
+            </a>
+
+            <a href="shop.html">
+                Shop
+            </a>
+
+            <a href="categories.html">
+                Categories
+            </a>
+
+            <a href="deals.html" class="active">
+                Deals
+            </a>
+
+        </nav>
+
+
+        <div class="header-right">
+
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="Search deals..."
+                onkeyup="searchDeals()"
+            >
+
+            <a href="cart.html">
+                🛒 Cart
+                <span id="cartCount">(0)</span>
+            </a>
+
+        </div>
+
+    </header>
+
+
+    <!-- DEALS PAGE -->
+
+    <main class="deals-container">
+
+        <section class="deals-heading">
+
+            <h1>
+                Today's Best Deals
+            </h1>
+
+            <p>
+                Save more with CouponX exclusive offers
+            </p>
+
+        </section>
+
+
+        <!-- DEAL FILTER -->
+
+        <div class="deal-filters">
+
+            <button onclick="showAllDeals()">
+                All Deals
+            </button>
+
+            <button onclick="filterDeals('Electronics')">
+                Electronics
+            </button>
+
+            <button onclick="filterDeals('Accessories')">
+                Accessories
+            </button>
+
+        </div>
+
+
+        <!-- DEAL PRODUCTS -->
+
+        <section
+            class="deals-grid"
+            id="dealsContainer"
+        >
+
+        </section>
+
+    </main>
+
+
+    <script src="deals.js"></script>
+
 </body>
 </html>
