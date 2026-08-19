@@ -1,11 +1,24 @@
-// Grab references to the elements we need
 const customerTabBtn = document.getElementById("customerTabBtn");
 const adminTabBtn = document.getElementById("adminTabBtn");
 const selectedRoleInput = document.getElementById("selectedRole");
 const loginForm = document.getElementById("loginForm");
 const errorMsg = document.getElementById("errorMsg");
+const passwordInput = document.getElementById("password");
+const togglePasswordBtn = document.getElementById("togglePasswordBtn");
 
-// ----- Tab switching logic -----
+// Show/Hide password logic
+
+togglePasswordBtn.addEventListener("click", function () {
+  if (passwordInput.type === "password") {
+    passwordInput.type = "text";
+    togglePasswordBtn.textContent = "Hide";
+  } else {
+    passwordInput.type = "password";
+    togglePasswordBtn.textContent = "Show";
+  }
+});
+
+// Tab switching logic
 
 customerTabBtn.addEventListener("click", function () {
   selectedRoleInput.value = "customer";
@@ -13,7 +26,6 @@ customerTabBtn.addEventListener("click", function () {
   // Highlight the Customer tab
   customerTabBtn.classList.add("bg-purple-600", "text-white");
   customerTabBtn.classList.remove("bg-white", "text-gray-600");
-
   // Un-highlight the Admin tab
   adminTabBtn.classList.add("bg-white", "text-gray-600");
   adminTabBtn.classList.remove("bg-purple-600", "text-white");
@@ -21,22 +33,18 @@ customerTabBtn.addEventListener("click", function () {
 
 adminTabBtn.addEventListener("click", function () {
   selectedRoleInput.value = "admin";
-
   // Highlight the Admin tab
   adminTabBtn.classList.add("bg-purple-600", "text-white");
   adminTabBtn.classList.remove("bg-white", "text-gray-600");
-
   // Un-highlight the Customer tab
   customerTabBtn.classList.add("bg-white", "text-gray-600");
   customerTabBtn.classList.remove("bg-purple-600", "text-white");
 });
 
-// ----- Form submit logic -----
+// Form submit logic
 
 loginForm.addEventListener("submit", function (event) {
-  // Stop the page from refreshing on form submit
   event.preventDefault();
-
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
   const role = selectedRoleInput.value;
@@ -44,7 +52,6 @@ loginForm.addEventListener("submit", function (event) {
   // Hide any old error message before trying again
   errorMsg.classList.add("hidden");
   errorMsg.textContent = "";
-
   // Call our basic Express backend
   fetch("/auth/login", {
     method: "POST",
@@ -62,12 +69,11 @@ loginForm.addEventListener("submit", function (event) {
       if (result.status === 200) {
         // Save basic user info so the dashboard page can greet them
         localStorage.setItem("couponx_user", JSON.stringify(result.body.user));
-
         // Redirect based on role returned by the backend
         if (result.body.user.role === "admin") {
-          window.location.href = "admin-dashboard.html";
+          window.location.href = "admin-dashboard-placeholder.html";
         } else {
-          window.location.href = "customer-dashboard.html";
+          window.location.href = "customer-dashboard-placeholder.html";
         }
       } else {
         // Show the error message sent back from the backend
