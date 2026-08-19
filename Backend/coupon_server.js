@@ -304,5 +304,5 @@ app.post("/api/orders/applycoupon", async (req, res) => {
 
 // Start the server
 app.listen(port, () => {
-  console.log(`http://localhost:${port}`)
+  console.log(`CouponX management backend running at http://localhost:${port}`)
 })
