@@ -1,10 +1,13 @@
-const customerTabBtn = document.getElementById("customerTabBtn")
-const adminTabBtn = document.getElementById("adminTabBtn")
-const selectedRoleInput = document.getElementById("selectedRole")
 const loginForm = document.getElementById("loginForm")
 const errorMsg = document.getElementById("errorMsg")
 const passwordInput = document.getElementById("password")
 const togglePasswordBtn = document.getElementById("togglePasswordBtn")
+
+// email format validation (shared)
+const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+function isValidEmail(value) {
+  return emailPattern.test(value)
+}
 
 // Show/Hide password logic
 togglePasswordBtn.addEventListener("click", function () {
@@ -17,43 +20,43 @@ togglePasswordBtn.addEventListener("click", function () {
   }
 });
 
-// Tab switching logic
-customerTabBtn.addEventListener("click", function () {
-  selectedRoleInput.value = "customer"
-
-  // Highlight the Customer tab
-  customerTabBtn.classList.add("bg-purple-600", "text-white")
-  customerTabBtn.classList.remove("bg-white", "text-gray-600")
-  // Un-highlight the Admin tab
-  adminTabBtn.classList.add("bg-white", "text-gray-600")
-  adminTabBtn.classList.remove("bg-purple-600", "text-white")
-});
-
-adminTabBtn.addEventListener("click", function () {
-  selectedRoleInput.value = "admin"
-  // Highlight the Admin tab
-  adminTabBtn.classList.add("bg-purple-600", "text-white")
-  adminTabBtn.classList.remove("bg-white", "text-gray-600")
-  // Un-highlight the Customer tab
-  customerTabBtn.classList.add("bg-white", "text-gray-600")
-  customerTabBtn.classList.remove("bg-purple-600", "text-white")
-});
-
 // Form submit logic
 loginForm.addEventListener("submit", function (event) {
   event.preventDefault()
-  const email = document.getElementById("email").value
+  const email = document.getElementById("email").value.trim()
   const password = document.getElementById("password").value
-  const role = selectedRoleInput.value
 
   errorMsg.classList.add("hidden")
   errorMsg.textContent = ""
+
+  // Client-side validation
+  if (!email && !password) {
+    errorMsg.textContent = "Please enter your email and password."
+    errorMsg.classList.remove("hidden")
+    return
+  }
+  if (!email) {
+    errorMsg.textContent = "Please enter your email address."
+    errorMsg.classList.remove("hidden")
+    return
+  }
+  if (!isValidEmail(email)) {
+    errorMsg.textContent = "Please enter a valid email address."
+    errorMsg.classList.remove("hidden")
+    return
+  }
+  if (!password) {
+    errorMsg.textContent = "Please enter your password."
+    errorMsg.classList.remove("hidden")
+    return
+  }
+
   fetch("/api/auth/login", {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
     },
-    body: JSON.stringify({ email: email, password: password, role: role })
+    body: JSON.stringify({ email: email, password: password })
   })
     .then(function (response) {
       return response.json().then(function (data) {
@@ -68,8 +71,17 @@ loginForm.addEventListener("submit", function (event) {
         } else {
           window.location.href = "customer-dashboard-placeholder.html"
         }
+      } else if (result.status === 404) {
+        errorMsg.textContent = result.body.message || "No account found with that email address."
+        errorMsg.classList.remove("hidden")
+      } else if (result.status === 401) {
+        errorMsg.textContent = result.body.message || "Incorrect password. Please try again."
+        errorMsg.classList.remove("hidden")
+      } else if (result.status === 400) {
+        errorMsg.textContent = result.body.message || "Please fill in all required fields."
+        errorMsg.classList.remove("hidden")
       } else {
-        errorMsg.textContent = result.body.message
+        errorMsg.textContent = result.body.message || "Something went wrong on our end. Please try again later."
         errorMsg.classList.remove("hidden")
       }
     })
@@ -80,7 +92,7 @@ loginForm.addEventListener("submit", function (event) {
     })
 });
 
-// Show/Hide password logic - Signup form (Password + Confirm Password)
+// Show/Hide password logic
 const signupPasswordInput = document.getElementById("signupPassword")
 const toggleSignupPasswordBtn = document.getElementById("toggleSignupPasswordBtn")
 const signupConfirmPasswordInput = document.getElementById("signupConfirmPassword")
@@ -107,21 +119,21 @@ toggleSignupConfirmPasswordBtn.addEventListener("click", function () {
 });
 
 // SIGNUP
-const roleTabs = document.querySelector(".flex.mb-6")
 const signupForm = document.getElementById("signupForm")
 const showSignupBtn = document.getElementById("showSignupBtn")
 const showLoginBtn = document.getElementById("showLoginBtn")
 
 showSignupBtn.addEventListener("click", function () {
   loginForm.classList.add("hidden")
-  roleTabs.classList.add("hidden")
   signupForm.classList.remove("hidden")
+  signupErrorMsg.classList.add("hidden")
+  signupSuccessMsg.classList.add("hidden")
 });
 
 showLoginBtn.addEventListener("click", function () {
   signupForm.classList.add("hidden")
-  roleTabs.classList.remove("hidden")
   loginForm.classList.remove("hidden")
+  errorMsg.classList.add("hidden")
 });
 
 // SIGNUP
@@ -139,12 +151,32 @@ signupForm.addEventListener("submit", function (event) {
   signupErrorMsg.classList.add("hidden")
   signupSuccessMsg.classList.add("hidden")
 
-  if (!name || !email || !password) {
-    signupErrorMsg.textContent = "Please fill in all fields."
+  // Client-side validation
+  if (!name) {
+    signupErrorMsg.textContent = "Please enter your full name."
     signupErrorMsg.classList.remove("hidden")
-    return;
+    return
   }
-
+  if (!email) {
+    signupErrorMsg.textContent = "Please enter your email address."
+    signupErrorMsg.classList.remove("hidden")
+    return
+  }
+  if (!isValidEmail(email)) {
+    signupErrorMsg.textContent = "Please enter a valid email address."
+    signupErrorMsg.classList.remove("hidden")
+    return
+  }
+  if (!password) {
+    signupErrorMsg.textContent = "Please enter a password."
+    signupErrorMsg.classList.remove("hidden")
+    return
+  }
+  if (password.length < 6) {
+    signupErrorMsg.textContent = "Password must be at least 6 characters long."
+    signupErrorMsg.classList.remove("hidden")
+    return
+  }
   if (password !== confirmPassword) {
     signupErrorMsg.textContent = "Passwords do not match."
     signupErrorMsg.classList.remove("hidden")
@@ -170,11 +202,16 @@ signupForm.addEventListener("submit", function (event) {
         signupForm.reset()
         setTimeout(function () {
           signupForm.classList.add("hidden")
-          roleTabs.classList.remove("hidden")
           loginForm.classList.remove("hidden")
         }, 1200)
+      } else if (result.status === 409) {
+        signupErrorMsg.textContent = result.body.message || "An account with that email already exists."
+        signupErrorMsg.classList.remove("hidden")
+      } else if (result.status === 400) {
+        signupErrorMsg.textContent = result.body.message || "Please check the details you entered."
+        signupErrorMsg.classList.remove("hidden")
       } else {
-        signupErrorMsg.textContent = result.body.message
+        signupErrorMsg.textContent = result.body.message || "Something went wrong on our end. Please try again later."
         signupErrorMsg.classList.remove("hidden")
       }
     })
@@ -182,5 +219,131 @@ signupForm.addEventListener("submit", function (event) {
       signupErrorMsg.textContent = "Could not reach the server. Is it running?"
       signupErrorMsg.classList.remove("hidden")
       console.log("Signup error:", error)
+    })
+})
+
+// FORGOT PASSWORD
+const forgotForm = document.getElementById("forgotForm")
+const showForgotBtn = document.getElementById("showForgotBtn")
+const backToLoginFromForgotBtn = document.getElementById("backToLoginFromForgotBtn")
+const forgotErrorMsg = document.getElementById("forgotErrorMsg")
+const forgotSuccessMsg = document.getElementById("forgotSuccessMsg")
+
+const forgotNewPasswordInput = document.getElementById("forgotNewPassword")
+const toggleForgotNewPasswordBtn = document.getElementById("toggleForgotNewPasswordBtn")
+const forgotConfirmPasswordInput = document.getElementById("forgotConfirmPassword")
+const toggleForgotConfirmPasswordBtn = document.getElementById("toggleForgotConfirmPasswordBtn")
+
+// Show forgot-password form
+showForgotBtn.addEventListener("click", function (event) {
+  event.preventDefault()
+  loginForm.classList.add("hidden")
+  forgotForm.classList.remove("hidden")
+  forgotErrorMsg.classList.add("hidden")
+  forgotSuccessMsg.classList.add("hidden")
+});
+
+// Back to login from forgot-password form
+backToLoginFromForgotBtn.addEventListener("click", function () {
+  forgotForm.classList.add("hidden")
+  loginForm.classList.remove("hidden")
+  errorMsg.classList.add("hidden")
+});
+
+// Show/Hide password logic
+toggleForgotNewPasswordBtn.addEventListener("click", function () {
+  if (forgotNewPasswordInput.type === "password") {
+    forgotNewPasswordInput.type = "text"
+    toggleForgotNewPasswordBtn.textContent = "Hide"
+  } else {
+    forgotNewPasswordInput.type = "password"
+    toggleForgotNewPasswordBtn.textContent = "Show"
+  }
+});
+
+toggleForgotConfirmPasswordBtn.addEventListener("click", function () {
+  if (forgotConfirmPasswordInput.type === "password") {
+    forgotConfirmPasswordInput.type = "text"
+    toggleForgotConfirmPasswordBtn.textContent = "Hide"
+  } else {
+    forgotConfirmPasswordInput.type = "password"
+    toggleForgotConfirmPasswordBtn.textContent = "Show"
+  }
+});
+
+// Submit new password
+forgotForm.addEventListener("submit", function (event) {
+  event.preventDefault()
+
+  const email = document.getElementById("forgotEmail").value.trim()
+  const newPassword = forgotNewPasswordInput.value
+  const confirmNewPassword = forgotConfirmPasswordInput.value
+
+  forgotErrorMsg.classList.add("hidden")
+  forgotSuccessMsg.classList.add("hidden")
+
+  // Client-side validation
+  if (!email) {
+    forgotErrorMsg.textContent = "Please enter your email address."
+    forgotErrorMsg.classList.remove("hidden")
+    return
+  }
+  if (!isValidEmail(email)) {
+    forgotErrorMsg.textContent = "Please enter a valid email address."
+    forgotErrorMsg.classList.remove("hidden")
+    return
+  }
+  if (!newPassword || !confirmNewPassword) {
+    forgotErrorMsg.textContent = "Please enter and confirm your new password."
+    forgotErrorMsg.classList.remove("hidden")
+    return
+  }
+  if (newPassword.length < 6) {
+    forgotErrorMsg.textContent = "Password must be at least 6 characters long."
+    forgotErrorMsg.classList.remove("hidden")
+    return
+  }
+  if (newPassword !== confirmNewPassword) {
+    forgotErrorMsg.textContent = "Passwords do not match."
+    forgotErrorMsg.classList.remove("hidden")
+    return
+  }
+
+  fetch("/api/auth/reset-password", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ email: email, newPassword: newPassword })
+  })
+    .then(function (response) {
+      return response.json().then(function (data) {
+        return { status: response.status, body: data }
+      })
+    })
+    .then(function (result) {
+      if (result.status === 200) {
+        forgotSuccessMsg.textContent = "Password updated! You can log in now."
+        forgotSuccessMsg.classList.remove("hidden")
+        forgotForm.reset()
+        setTimeout(function () {
+          forgotForm.classList.add("hidden")
+          loginForm.classList.remove("hidden")
+        }, 1200)
+      } else if (result.status === 404) {
+        forgotErrorMsg.textContent = result.body.message || "No account found with that email address."
+        forgotErrorMsg.classList.remove("hidden")
+      } else if (result.status === 400) {
+        forgotErrorMsg.textContent = result.body.message || "Please check the details you entered."
+        forgotErrorMsg.classList.remove("hidden")
+      } else {
+        forgotErrorMsg.textContent = result.body.message || "Something went wrong on our end. Please try again later."
+        forgotErrorMsg.classList.remove("hidden")
+      }
+    })
+    .catch(function (error) {
+      forgotErrorMsg.textContent = "Could not reach the server. Is it running?"
+      forgotErrorMsg.classList.remove("hidden")
+      console.log("Reset password error:", error)
     })
 })

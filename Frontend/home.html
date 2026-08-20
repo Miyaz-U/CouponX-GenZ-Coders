@@ -1,12 +1,103 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>CouponX - Home</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
+<body class="bg-gray-50 min-h-screen">
+    <header class="bg-white shadow-sm">
+        <div class="w-full flex items-center justify-between px-6 lg:px-12 py-4">
+            <a href="home.html" class="text-xl font-bold text-purple-600">CouponX</a>
+            <nav class="hidden md:flex gap-6 text-sm font-medium text-gray-700">
+                <a href="home.html" class="text-purple-600">Home</a>
+                <a href="shop.html" class="hover:text-purple-600">Shop</a>
+                <a href="categories.html" class="hover:text-purple-600">Categories</a>
+                <a href="deals.html" class="hover:text-purple-600">Deals</a>
+            </nav>
+            <a href="cart.html" class="relative text-gray-700">
+                🛒
+                <span id="cartCount" class="absolute -top-2 -right-3 bg-purple-600 text-white text-xs rounded-full px-1.5">0</span>
+            </a>
+        </div>
+    </header>
+
+    <main class="w-full px-6 lg:px-12 py-8">
+        <section class="relative overflow-hidden rounded-xl bg-gradient-to-r from-purple-700 via-purple-600 to-purple-400 px-8 py-10 text-white mb-8">
+            <div class="relative z-10 max-w-lg">
+                <p class="mb-2 text-xs font-bold tracking-widest text-purple-100 uppercase">Mega Savings Event</p>
+                <h1 class="text-2xl font-bold leading-tight sm:text-3xl">
+                    Big savings on tech essentials, every day.
+                </h1>
+                <p class="mt-2 text-sm leading-relaxed text-purple-50">
+                    Shop laptops, accessories &amp; more — apply a coupon at checkout and save instantly!
+                </p>
+                <a href="shop.html"
+                    class="mt-4 inline-block rounded-md border border-white/40 bg-white/15 px-5 py-2 text-sm font-semibold hover:bg-white/25 transition">
+                    Shop Now
+                </a>
+            </div>
+            <div class="pointer-events-none absolute right-8 top-1/2 -translate-y-1/2 hidden sm:block">
+                <div class="h-24 w-24 rounded-full bg-white/10"></div>
+            </div>
+        </section>
+        <section id="categories" class="mb-8">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-base font-semibold text-gray-800">Shop by Category</h2>
+                <a href="categories.html" class="text-sm font-medium text-purple-600 hover:underline">View All →</a>
+            </div>
+            <div id="categoryGrid" class="grid grid-cols-3 gap-3 sm:grid-cols-6"></div>
+        </section>
+        <section id="featured" class="mb-8">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-base font-semibold text-gray-800">Featured Products</h2>
+                <a href="shop.html" class="text-sm font-medium text-purple-600 hover:underline">View All →</a>
+            </div>
+            <p id="featuredLoading" class="text-gray-500 text-sm">Loading products...</p>
+            <p id="featuredError" class="text-red-600 hidden text-sm"></p>
+            <div id="featuredGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4"></div>
+        </section>
+        <section id="deals" class="mb-8">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-base font-semibold text-gray-800">Today's Deals</h2>
+                <a href="deals.html" class="text-sm font-medium text-purple-600 hover:underline">View All →</a>
+            </div>
+            <p id="dealsLoading" class="text-gray-500 text-sm">Loading deals...</p>
+            <p id="dealsError" class="text-red-600 hidden text-sm"></p>
+            <div id="dealsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4"></div>
+        </section>
+    </main>
+    <aside id="cartDrawer"
+        class="fixed inset-y-0 right-0 z-50 w-full max-w-sm translate-x-full border-l border-gray-200 bg-white shadow-2xl transition-transform duration-300">
+        <div class="flex h-full flex-col">
+            <div class="flex items-center justify-between border-b px-5 py-4">
+                <div>
+                    <h3 class="text-sm font-bold text-gray-800">Your Cart</h3>
+                    <p id="cartSummary" class="mt-0.5 text-xs text-gray-400">0 items</p>
+                </div>
+                <button id="closeCart"
+                    class="grid h-8 w-8 place-items-center rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-600 text-lg font-bold">
+                    ✕
+                </button>
+            </div>
+            <div id="cartItems" class="flex-1 overflow-y-auto p-5"></div>
+            <div class="border-t p-5">
+                <div class="mb-3 flex items-center justify-between text-sm font-bold">
+                    <span>Subtotal</span>
+                    <span id="cartTotal">₹0</span>
+                </div>
+                <a href="cart.html"
+                    class="block w-full rounded-lg bg-purple-600 py-2.5 text-center text-sm font-semibold text-white hover:bg-purple-700">
+                    Checkout
+                </a>
+            </div>
+        </div>
+    </aside>
+    <div id="cartBackdrop" class="fixed inset-0 z-40 hidden bg-gray-900/30"></div>
+    <div id="toast"
+        class="pointer-events-none fixed bottom-4 left-1/2 z-[60] -translate-x-1/2 rounded-lg bg-gray-900 px-4 py-2 text-xs font-medium text-white opacity-0 shadow-lg transition-all">
+    </div>
     <script src="js/home.js"></script>
 </body>
 </html>

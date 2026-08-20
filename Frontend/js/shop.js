@@ -1,8 +1,8 @@
 // ELEMENTS
 const categoryFiltersBox = document.getElementById("categoryFilters")
 const brandFiltersBox = document.getElementById("brandFilters")
-const minPriceInput = document.getElementById("minPriceInput")
 const maxPriceInput = document.getElementById("maxPriceInput")
+const maxPriceValueLabel = document.getElementById("maxPriceValueLabel")
 const searchInput = document.getElementById("searchInput")
 const sortSelect = document.getElementById("sortSelect")
 const clearFiltersBtn = document.getElementById("clearFiltersBtn")
@@ -30,6 +30,48 @@ function getEffectivePrice(product) {
   return product.isDeal && product.dealPrice ? product.dealPrice : product.price
 }
 
+// CATEGORY TILE COLORS 
+const categoryTileStyles = {
+  "Laptops": { bg: "bg-purple-100" },
+  "Accessories": { bg: "bg-blue-100" },
+  "Mobiles": { bg: "bg-slate-100" },
+  "Audio": { bg: "bg-pink-100" },
+  "Wearables": { bg: "bg-green-100" },
+  "Gaming": { bg: "bg-orange-100" }
+}
+const defaultTileStyle = { bg: "bg-gray-100" }
+
+function getCategoryTileStyle(category) {
+  return categoryTileStyles[category] || defaultTileStyle
+}
+
+// Deterministic pseudo rating/review-count per product
+function hashString(str) {
+  let hash = 0
+  for (let i = 0; i < str.length; i++) {
+    hash = (hash * 31 + str.charCodeAt(i)) % 100000
+  }
+  return Math.abs(hash)
+}
+
+function getProductRating(product) {
+  const hash = hashString(product._id || product.name)
+  const rating = 3.5 + (hash % 15) / 10 // 3.5 - 5.0
+  const reviewCount = 20 + (hash % 300)
+  return { rating: Math.round(rating * 2) / 2, reviewCount: reviewCount }
+}
+
+function renderStars(rating) {
+  const fullStars = Math.floor(rating)
+  const hasHalfStar = rating - fullStars >= 0.5
+  let starsHtml = ""
+  for (let i = 0; i < fullStars; i++) starsHtml += "★"
+  if (hasHalfStar) starsHtml += "½"
+  const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0)
+  for (let i = 0; i < emptyStars; i++) starsHtml += "☆"
+  return starsHtml
+}
+
 function addToCart(product) {
   const cart = JSON.parse(localStorage.getItem("couponXCart")) || []
 
@@ -52,6 +94,23 @@ function addToCart(product) {
   updateCartCountBadge()
 }
 
+// PRICE SLIDER RANGE
+function setupPriceRangeFromProducts() {
+  if (allProducts.length === 0) return
+
+  const prices = allProducts.map(function (product) {
+    return getEffectivePrice(product)
+  })
+  const highestPrice = Math.max.apply(null, prices)
+
+  // Round up to the nearest ₹500
+  const roundedMax = Math.ceil(highestPrice / 500) * 500
+
+  maxPriceInput.max = roundedMax
+  maxPriceInput.value = roundedMax
+  updateMaxPriceLabel()
+}
+
 // LOAD DATA (once)
 async function loadShopData() {
   try {
@@ -68,6 +127,7 @@ async function loadShopData() {
     allProducts = await productsRes.json()
 
     loadingMsg.classList.add("hidden")
+    setupPriceRangeFromProducts()
     renderCategoryFilters()
     renderBrandFilters()
     applyFilters()
@@ -121,11 +181,16 @@ function getCheckedValues(className) {
 }
 
 // FILTER + SORT + RENDER
+function updateMaxPriceLabel() {
+  maxPriceValueLabel.textContent = "₹" + Number(maxPriceInput.value).toLocaleString("en-IN")
+}
+
 function applyFilters() {
+  updateMaxPriceLabel()
+
   const selectedCategories = getCheckedValues("categoryCheckbox")
   const selectedBrands = getCheckedValues("brandCheckbox")
-  const minPrice = minPriceInput.value ? Number(minPriceInput.value) : null
-  const maxPrice = maxPriceInput.value ? Number(maxPriceInput.value) : null
+  const maxPrice = Number(maxPriceInput.value)
   const searchTerm = searchInput.value.trim().toLowerCase()
   const sortValue = sortSelect.value
 
@@ -138,10 +203,7 @@ function applyFilters() {
     if (selectedBrands.length > 0 && selectedBrands.indexOf(product.brand) === -1) {
       return false
     }
-    if (minPrice !== null && effectivePrice < minPrice) {
-      return false
-    }
-    if (maxPrice !== null && effectivePrice > maxPrice) {
+    if (effectivePrice > maxPrice) {
       return false
     }
     if (searchTerm && product.name.toLowerCase().indexOf(searchTerm) === -1) {
@@ -173,12 +235,28 @@ function renderProducts(products) {
 
   products.forEach(function (product) {
     const card = document.createElement("div")
-    card.className = "bg-white border border-gray-200 rounded-lg p-4 flex flex-col"
+    card.className = "bg-white border border-gray-200 rounded-lg p-4 flex flex-col transition duration-200 hover:shadow-lg hover:border-purple-300 hover:-translate-y-1"
 
     const showDealPrice = product.isDeal && product.dealPrice
+    const tileStyle = getCategoryTileStyle(product.category)
+    const { rating, reviewCount } = getProductRating(product)
+    const hasImage = !!product.image
+
+    // Image tile
+    const imageTileHtml = hasImage
+      ? '<div class="h-28 bg-gray-50 rounded-md mb-3 overflow-hidden flex items-center justify-center">' +
+        '  <img src="' + product.image + '" alt="' + product.name + '" class="productImg w-full h-full object-contain" />' +
+        '</div>'
+      : '<div class="h-28 ' + tileStyle.bg + ' border-2 border-dashed border-gray-300 rounded-md mb-3 flex items-center justify-center text-center px-2">' +
+        '  <span class="text-xs text-gray-400">Product image<br/>placeholder</span>' +
+        '</div>'
 
     card.innerHTML =
-      '<div class="h-28 bg-gray-100 rounded-md flex items-center justify-center text-3xl mb-3">🛍️</div>' +
+      imageTileHtml +
+      '<div class="flex items-center gap-1 text-xs text-amber-500 mb-1">' +
+      '  <span>' + renderStars(rating) + '</span>' +
+      '  <span class="text-gray-400">(' + reviewCount + ')</span>' +
+      '</div>' +
       '<h3 class="font-semibold text-gray-800 text-sm mb-1">' + product.name + '</h3>' +
       '<p class="text-xs text-gray-500 mb-2">' + product.category + '</p>' +
       '<div class="mt-auto flex items-center justify-between">' +
@@ -188,17 +266,27 @@ function renderProducts(products) {
           '<span class="text-xs text-gray-400 line-through">₹' + product.price.toLocaleString() + '</span>'
         : '<span class="font-bold text-gray-800">₹' + product.price.toLocaleString() + '</span>') +
       '  </div>' +
-      '  <button class="addToCartBtn bg-purple-600 text-white text-xs font-medium rounded-md px-3 py-1.5 hover:bg-purple-700">' +
-      '    Add' +
+      '  <button class="addToCartBtn w-7 h-7 flex items-center justify-center bg-purple-600 text-white text-sm font-bold rounded-full hover:bg-purple-700" aria-label="Add to cart">' +
+      '    +' +
       '  </button>' +
       '</div>'
+
+    if (hasImage) {
+      const imgEl = card.querySelector(".productImg")
+      imgEl.addEventListener("error", function () {
+        const tile = imgEl.parentElement
+        tile.innerHTML = '<span class="text-xs text-gray-400 text-center px-2">Image not found</span>'
+        tile.classList.remove("bg-gray-50")
+        tile.classList.add(tileStyle.bg, "border-2", "border-dashed", "border-gray-300")
+      })
+    }
 
     const addBtn = card.querySelector(".addToCartBtn")
     addBtn.addEventListener("click", function () {
       addToCart(product)
-      addBtn.textContent = "Added ✓"
+      addBtn.textContent = "✓"
       setTimeout(function () {
-        addBtn.textContent = "Add"
+        addBtn.textContent = "+"
       }, 1000)
     })
 
@@ -209,15 +297,13 @@ function renderProducts(products) {
 // EVENTS
 searchInput.addEventListener("input", applyFilters)
 sortSelect.addEventListener("change", applyFilters)
-minPriceInput.addEventListener("input", applyFilters)
 maxPriceInput.addEventListener("input", applyFilters)
 
 clearFiltersBtn.addEventListener("click", function () {
   document.querySelectorAll(".categoryCheckbox, .brandCheckbox").forEach(function (box) {
     box.checked = false
   })
-  minPriceInput.value = ""
-  maxPriceInput.value = ""
+  maxPriceInput.value = maxPriceInput.max
   searchInput.value = "";
   sortSelect.value = "featured"
   applyFilters()
