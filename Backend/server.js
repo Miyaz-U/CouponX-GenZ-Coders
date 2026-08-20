@@ -64,7 +64,7 @@ const products = [
     category: "Laptops",
     price: 89999,
     originalPrice: 109999,
-    image: "/images/1-macbook-air.jpg"
+    image: "/images/1.jpg"
   },
 
   {
@@ -73,7 +73,7 @@ const products = [
     category: "Laptops",
     price: 59999,
     originalPrice: 69999,
-    image: "/images/2-dell-inspiron.jpg"
+    image: "/images/2.jpg"
   },
 
   {
@@ -82,7 +82,7 @@ const products = [
     category: "Laptops",
     price: 64999,
     originalPrice: 74999,
-    image: "/images/3-hp-pavilion.jpg"
+    image: "/images/3.jpg"
   },
 
   {
@@ -91,7 +91,7 @@ const products = [
     category: "Laptops",
     price: 54999,
     originalPrice: 64999,
-    image: "/images/4-asus-vivobook.jpg"
+    image: "/images/4.jpg"
   },
 
 
@@ -101,7 +101,7 @@ const products = [
     category: "Phones",
     price: 74999,
     originalPrice: 79999,
-    image: "/images/5-samsung-galaxy.jpg"
+    image: "/images/5.jpg"
   },
 
   {
@@ -110,7 +110,7 @@ const products = [
     category: "Phones",
     price: 69999,
     originalPrice: 79999,
-    image: "/images/6-iphone-16.jpg"
+    image: "/images/6.jpg"
   },
 
   {
@@ -119,7 +119,7 @@ const products = [
     category: "Phones",
     price: 64999,
     originalPrice: 74999,
-    image: "/images/7-google-pixel.jpg"
+    image: "/images/7.jpg"
   },
 
   {
@@ -128,7 +128,7 @@ const products = [
     category: "Phones",
     price: 59999,
     originalPrice: 69999,
-    image: "/images/8-oneplus.jpg"
+    image: "/images/8.jpg"
   },
 
 
@@ -138,7 +138,7 @@ const products = [
     category: "Audio",
     price: 24999,
     originalPrice: 29999,
-    image: "/images/9-sony-wh-1000xm5.jpg"
+    image: "/images/9.jpg"
   },
 
   {
@@ -147,7 +147,7 @@ const products = [
     category: "Audio",
     price: 18999,
     originalPrice: 24999,
-    image: "/images/10-apple-airpods-pro.jpg"
+    image: "/images/10.jpg"
   },
 
   {
@@ -156,7 +156,7 @@ const products = [
     category: "Audio",
     price: 7999,
     originalPrice: 9999,
-    image: "/images/11-jbl-headphones.jpg"
+    image: "/images/11.jpg"
   },
 
   {
@@ -165,7 +165,7 @@ const products = [
     category: "Audio",
     price: 22999,
     originalPrice: 27999,
-    image: "/images/12-bose-headphones.jpg"
+    image: "/images/12.jpg"
   },
 
 
@@ -175,7 +175,7 @@ const products = [
     category: "Accessories",
     price: 6999,
     originalPrice: 8999,
-    image: "/images/13-logitech-mx-master-3s.jpg"
+    image: "/images/13.jpg"
   },
 
   {
@@ -184,7 +184,7 @@ const products = [
     category: "Accessories",
     price: 2999,
     originalPrice: 3999,
-    image: "/images/14-wireless-keyboard.jpg"
+    image: "/images/14.jpg"
   },
 
   {
@@ -193,7 +193,7 @@ const products = [
     category: "Accessories",
     price: 2499,
     originalPrice: 3499,
-    image: "/images/15-usb-c-hub.jpg"
+    image: "/images/15.jpg"
   },
 
   {
@@ -202,7 +202,7 @@ const products = [
     category: "Accessories",
     price: 6999,
     originalPrice: 7999,
-    image: "/images/16-apple-magic-mouse.jpg"
+    image: "/images/16.jpg"
   },
 
 
@@ -212,7 +212,7 @@ const products = [
     category: "Monitors",
     price: 21999,
     originalPrice: 25999,
-    image: "/images/17-asus-gaming-monitor.jpg"
+    image: "/images/17.jpg"
   },
 
   {
@@ -221,7 +221,7 @@ const products = [
     category: "Monitors",
     price: 16999,
     originalPrice: 19999,
-    image: "/images/18-lg-ultragear-monitor.jpg"
+    image: "/images/18.jpg"
   },
 
   {
@@ -230,7 +230,7 @@ const products = [
     category: "Monitors",
     price: 24999,
     originalPrice: 29999,
-    image: "/images/19-samsung-odyssey.jpg"
+    image: "/images/19.jpg"
   },
 
   {
@@ -239,7 +239,7 @@ const products = [
     category: "Monitors",
     price: 18999,
     originalPrice: 22999,
-    image: "/images/20-acer-gaming-monitor.jpg"
+    image: "/images/20.jpg"
   },
 
 
@@ -249,7 +249,7 @@ const products = [
     category: "Gaming",
     price: 4999,
     originalPrice: 6999,
-    image: "/images/21-mechanical-gaming-keyboard.jpg"
+    image: "/images/21.jpg"
   },
 
   {
@@ -258,7 +258,7 @@ const products = [
     category: "Gaming",
     price: 5999,
     originalPrice: 7999,
-    image: "/images/22-razer-gaming-mouse.jpg"
+    image: "/images/22.jpg"
   },
 
   {
@@ -267,7 +267,7 @@ const products = [
     category: "Gaming",
     price: 7999,
     originalPrice: 9999,
-    image: "/images/23-razer-gaming-headset.jpg"
+    image: "/images/23.jpg"
   },
 
   {
@@ -276,7 +276,7 @@ const products = [
     category: "Gaming",
     price: 5999,
     originalPrice: 6999,
-    image: "/images/24-playstation-controller.jpg"
+    image: "/images/24.jpg"
   },
 
 
@@ -286,7 +286,7 @@ const products = [
     category: "Accessories",
     price: 7499,
     originalPrice: 8999,
-    image: "/images/25-external-ssd.jpg"
+    image: "/images/25.jpg"
   },
 
   {
@@ -295,7 +295,7 @@ const products = [
     category: "Accessories",
     price: 6999,
     originalPrice: 8499,
-    image: "/images/26-portable-storage.jpg"
+    image: "/images/26.jpg"
   },
 
   {
@@ -304,7 +304,7 @@ const products = [
     category: "Audio",
     price: 4499,
     originalPrice: 5499,
-    image: "/images/27-smart-speaker.jpg"
+    image: "/images/27.jpg"
   },
 
   {
@@ -313,7 +313,15 @@ const products = [
     category: "Accessories",
     price: 42999,
     originalPrice: 49999,
-    image: "/images/28-apple-smart-watch.jpg"
+    image: "/images/28.jpg"
+  },
+  {
+    _id: "29",
+    name: "Apple Smart Watch",
+    category: "Accessories",
+    price: 42999,
+    originalPrice: 49999,
+    image: "/images/29.jpg"
   }
 
 ];
@@ -378,7 +386,7 @@ app.get("/api/products/featured", (req, res) => {
 
 
 app.get("/api/products/deals", (req, res) => {
-  res.json(products.slice(8, 28));
+  res.json(products.slice(8, 29));
 });
 
 

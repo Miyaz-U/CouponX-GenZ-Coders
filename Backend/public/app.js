@@ -162,7 +162,7 @@ function renderProducts(
           >
 
             <div
-              class="relative flex h-48 w-full items-center justify-center overflow-hidden bg-slate-50"
+              class="relative flex h-72 w-full items-center justify-center overflow-hidden bg-slate-50"
             >
 
               <span
@@ -174,7 +174,7 @@ function renderProducts(
               <img
                 src="${product.image}"
                 alt="${product.name}"
-                class="h-40 w-40 object-contain"
+                class="h-full w-full object-contain p-3"
                 loading="lazy"
                 onerror="this.src='https://placehold.co/500x400/f5f3ff/7c3aed?text=CouponX'"
               />
