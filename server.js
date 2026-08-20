@@ -437,7 +437,7 @@ app.post("/api/orders/applycoupon", async function (req, res) {
 
 // HOME PAGE REDIRECT
 app.get("/", (req, res) => {
-    res.redirect("/home.html");
+    res.redirect("/login.html");
 })
 
 // START SERVER
