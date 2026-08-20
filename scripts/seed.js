@@ -1,6 +1,7 @@
+const path = require("path")
 const mongoose = require("mongoose")
 const dotenv = require("dotenv")
-dotenv.config()
+dotenv.config({ path: path.join(__dirname, "../.env") })
 
 mongoose.connect(process.env.MONGODB_URI).then(async function () {
   console.log("Connected. Seeding...")
@@ -37,13 +38,13 @@ mongoose.connect(process.env.MONGODB_URI).then(async function () {
     { name: "HP Pavilion 14", description: "14 inch slim laptop", price: 55000, category: "Laptops", brand: "HP", stock: 12, image: "images/products/HPPavilion14.jpeg", isDeal: false, dealPrice: null, dealDiscountPercent: null },
     { name: "Lenovo IdeaPad Slim 3", description: "Lightweight everyday laptop", price: 42000, category: "Laptops", brand: "Lenovo", stock: 8, image: "images/products/LenovoIdeaPadSlim3.jpeg", isDeal: true, dealPrice: 37800, dealDiscountPercent: 10 },
     { name: "Asus ROG Strix G15", description: "Gaming laptop with RTX graphics", price: 85000, category: "Laptops", brand: "Asus", stock: 6, image: "images/products/AsusROGStrixG15.jpeg", isDeal: true, dealPrice: 76500, dealDiscountPercent: 10 },
-    { name: "Apple MacBook Air M2", description: "13 inch laptop with M2 chip", price: 110000, category: "Laptops", brand: "Apple", stock: 5, image: "images/products/AppleMacBookAirM2.jpeg", isDeal: false, dealPrice: null, dealDiscountPercent: null },
+    { name: "Apple MacBook Air M2", description: "13 inch laptop with M2 chip", price: 110000, category: "Laptops", brand: "Apple", stock: 5, image: "images/products/AppleMacbookAirM2.jpeg", isDeal: false, dealPrice: null, dealDiscountPercent: null },
 
     { name: "Logitech Wireless Mouse", description: "Ergonomic wireless mouse", price: 1750, category: "Accessories", brand: "Logitech", stock: 50, image: "images/products/LogitechWirelessMouse.jpeg", isDeal: false, dealPrice: null, dealDiscountPercent: null },
     { name: "Mechanical Keyboard", description: "RGB mechanical keyboard", price: 4000, category: "Accessories", brand: "HP", stock: 30, image: "images/products/MechanicalKeyboard.jpeg", isDeal: true, dealPrice: 3200, dealDiscountPercent: 20 },
     { name: "HD 1080p Webcam", description: "Full HD webcam", price: 2000, category: "Accessories", brand: "Logitech", stock: 25, image: "images/products/WebcamHD1080p.jpeg", isDeal: true, dealPrice: 1750, dealDiscountPercent: 30 },
     { name: "65W USB-C Charger", description: "Fast charging adapter", price: 1400, category: "Accessories", brand: "Dell", stock: 40, image: "images/products/65WUSBCCharger.jpeg", isDeal: true, dealPrice: 1275, dealDiscountPercent: 15 },
-    { name: "USB-C Hub 7-in-1", description: "Multiport adapter for laptops", price: 2200, category: "Accessories", brand: "HP", stock: 45, image: "images/products/USBCHub7in1.jpeg", isDeal: false, dealPrice: null, dealDiscountPercent: null },
+    { name: "USB-C Hub 7-in-1", description: "Multiport adapter for laptops", price: 2200, category: "Accessories", brand: "HP", stock: 45, image: "images/products/USBCHub7In1.jpeg", isDeal: false, dealPrice: null, dealDiscountPercent: null },
     { name: "Anker Power Bank 20000mAh", description: "Fast charging portable power bank", price: 2800, category: "Accessories", brand: "Anker", stock: 50, image: "images/products/AnkerPowerBank20000mAh.jpeg", isDeal: false, dealPrice: null, dealDiscountPercent: null },
 
     { name: "Phone Case + Screen Guard", description: "Combo protection kit", price: 1000, category: "Mobiles", brand: "HP", stock: 100, image: "images/products/PhoneCaseAndScreenGuard.jpeg", isDeal: true, dealPrice: 780, dealDiscountPercent: 22 },
@@ -82,12 +83,12 @@ mongoose.connect(process.env.MONGODB_URI).then(async function () {
     { name: "Apple iPad 10th Gen", description: "10.9 inch tablet with A14 chip", price: 45000, category: "Tablets", brand: "Apple", stock: 8, image: "images/products/AppleiPad10thGen.jpeg", isDeal: false, dealPrice: null, dealDiscountPercent: null },
     { name: "Lenovo Tab M10", description: "Budget-friendly Android tablet", price: 12000, category: "Tablets", brand: "Lenovo", stock: 17, image: "images/products/LenovoTabM10.jpeg", isDeal: true, dealPrice: 10200, dealDiscountPercent: 15 },
 
-    { name: "TP-Link AX1500 Router", description: "Dual band Wi-Fi 6 router", price: 3500, category: "Networking", brand: "TP-Link", stock: 22, image: "images/products/tplinkAX1500Router.jpeg", isDeal: false, dealPrice: null, dealDiscountPercent: null },
+    { name: "TP-Link AX1500 Router", description: "Dual band Wi-Fi 6 router", price: 3500, category: "Networking", brand: "TP-Link", stock: 22, image: "images/products/TPLinkAX1500Router.jpeg", isDeal: false, dealPrice: null, dealDiscountPercent: null },
     { name: "Netgear Wi-Fi Extender", description: "Range extender for home Wi-Fi", price: 2200, category: "Networking", brand: "Netgear", stock: 28, image: "images/products/NetgearWiFiExtender.jpeg", isDeal: true, dealPrice: 1870, dealDiscountPercent: 15 },
 
     { name: "SanDisk 128GB Pen Drive", description: "USB 3.0 flash drive", price: 900, category: "Storage", brand: "SanDisk", stock: 80, image: "images/products/SanDisk128GBPenDrive.jpeg", isDeal: true, dealPrice: 765, dealDiscountPercent: 15 },
     { name: "Seagate 1TB External HDD", description: "Portable external hard drive", price: 4500, category: "Storage", brand: "Seagate", stock: 26, image: "images/products/Seagate1TBExternalHDD.jpeg", isDeal: false, dealPrice: null, dealDiscountPercent: null },
-    { name: "Samsung 256GB microSD Card", description: "High speed microSD memory card", price: 1600, category: "Storage", brand: "Samsung", stock: 55, image: "images/products/Samsung256GBmicroSDCard.jpeg", isDeal: true, dealPrice: 1360, dealDiscountPercent: 15 }
+    { name: "Samsung 256GB microSD Card", description: "High speed microSD memory card", price: 1600, category: "Storage", brand: "Samsung", stock: 55, image: "images/products/Samsung256GBMicroSDCard.jpeg", isDeal: true, dealPrice: 1360, dealDiscountPercent: 15 }
   ])
 
   console.log("Seeding done!")

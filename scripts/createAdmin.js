@@ -5,14 +5,15 @@
 //
 // HOW TO USE:
 // 1. Open this file and change the values inside ADMIN_DETAILS below.
-// 2. Open a terminal in the "Backend" folder.
-// 3. Run:  node createAdmin.js
+// 2. Open a terminal in the "CouponX" root folder.
+// 3. Run:  npm run create-admin
 // 4. You should see "Admin account created successfully".
 // 5. Now log in on the Login page using the "Admin Login" tab with these credentials.
 
+const path = require("path")
 const mongoose = require("mongoose")
 const dotenv = require("dotenv")
-dotenv.config()
+dotenv.config({ path: path.join(__dirname, "../.env") })
 
 // ✏️ CHANGE THESE VALUES BEFORE RUNNING
 const ADMIN_DETAILS = {

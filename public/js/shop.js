@@ -312,3 +312,13 @@ clearFiltersBtn.addEventListener("click", function () {
 // INIT
 updateCartCountBadge()
 loadShopData()
+
+// CUSTOMER LOGOUT
+const logoutBtn = document.getElementById("logoutBtn");
+
+if (logoutBtn) {
+  logoutBtn.addEventListener("click", function () {
+    localStorage.removeItem("couponx_user");
+    window.location.href = "login.html";
+  });
+}

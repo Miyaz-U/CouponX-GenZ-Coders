@@ -1,0 +1,24 @@
+{
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "mongodb": "^7.5.0",
+    "mongoose": "^9.9.2",
+    "path": "^0.12.7"
+  },
+  "name": "couponx",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+  "test": "echo \"Error: no test specified\" && exit 1",
+  "start": "nodemon server.js",
+  "seed": "node scripts/seed.js",
+  "create-admin": "node scripts/createAdmin.js"
+},
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs"
+}

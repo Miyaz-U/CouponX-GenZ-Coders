@@ -69,7 +69,7 @@ loginForm.addEventListener("submit", function (event) {
         if (result.body.user.role === "admin") {
           window.location.href = "admin-dashboard-placeholder.html"
         } else {
-          window.location.href = "customer-dashboard-placeholder.html"
+          window.location.href = "home.html"
         }
       } else if (result.status === 404) {
         errorMsg.textContent = result.body.message || "No account found with that email address."

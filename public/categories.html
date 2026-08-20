@@ -16,10 +16,15 @@
                 <a href="categories.html" class="text-purple-600">Categories</a>
                 <a href="deals.html" class="hover:text-purple-600">Deals</a>
             </nav>
-            <a href="cart.html" class="relative text-gray-700">
-                🛒
-                <span id="cartCount" class="absolute -top-2 -right-3 bg-purple-600 text-white text-xs rounded-full px-1.5">0</span>
-            </a>
+            <div class="flex items-center gap-4">
+                <a href="cart.html" class="relative text-gray-700">
+                    🛒
+                    <span id="cartCount" class="absolute -top-2 -right-3 bg-purple-600 text-white text-xs rounded-full px-1.5">0</span>
+                </a>
+                <button id="logoutBtn" class="text-sm font-medium bg-purple-600 text-white px-3 py-1 rounded-lg hover:bg-purple-700 transition">
+                    Logout
+                </button>
+            </div>
         </div>
     </header>
 

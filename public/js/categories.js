@@ -14,17 +14,17 @@ const backToCategoriesBtn = document.getElementById("backToCategoriesBtn");
 
 // CATEGORY IMAGES
 const categoryImages = {
-  Laptops: "images/Categories/Laptops.jpeg",
-  Accessories: "images/Categories/Accessories.jpeg",
-  Mobiles: "images/Categories/Mobiles.jpeg",
-  Audio: "images/Categories/Audio.jpeg",
-  Wearables: "images/Categories/Wearables.jpeg",
-  Gaming: "images/Categories/Gaming.jpeg",
-  Cameras: "images/Categories/Cameras.jpeg",
-  "Home Appliances": "images/Categories/HomeAppliances.jpeg",
-  Tablets: "images/Categories/Tablets.jpeg",
-  Networking: "images/Categories/Networking.jpeg",
-  Storage: "images/Categories/Storage.jpeg"
+  Laptops: "images/categories/Laptops.jpeg",
+  Accessories: "images/categories/Accessories.jpeg",
+  Mobiles: "images/categories/Mobiles.jpeg",
+  Audio: "images/categories/Audio.jpeg",
+  Wearables: "images/categories/Wearables.jpeg",
+  Gaming: "images/categories/Gaming.jpeg",
+  Cameras: "images/categories/Cameras.jpeg",
+  "Home Appliances": "images/categories/HomeAppliances.jpeg",
+  Tablets: "images/categories/Tablets.jpeg",
+  Networking: "images/categories/Networking.jpeg",
+  Storage: "images/categories/Storage.jpeg"
 };
 
 let allCategories = [];
@@ -287,3 +287,13 @@ loadCategories().then(function () {
     showCategoryProducts(cat);
   }
 });
+
+// CUSTOMER LOGOUT
+const logoutBtn = document.getElementById("logoutBtn");
+
+if (logoutBtn) {
+  logoutBtn.addEventListener("click", function () {
+    localStorage.removeItem("couponx_user");
+    window.location.href = "login.html";
+  });
+}
