@@ -1,23 +1,18 @@
-// Import modules
 const express = require("express")
 const mongoose = require("mongoose")
 const cors = require("cors")
 const path = require("path")
 const dotenv = require("dotenv")
 
-// Loading environment variables from .env file
 dotenv.config()
 
-// Initialize Express app
 const app = express()
 const PORT = process.env.PORT || 3000
 
-// Middleware
 app.use(cors())
 app.use(express.json())
-app.use(express.static(path.join(__dirname, "public")))
 
-// MongoDB connection
+app.use(express.static(path.join(__dirname, "public")))
 mongoose.connect(process.env.MONGODB_URI).then(function () {
   console.log("MongoDB connected")
 }).catch(function (err) {
@@ -26,7 +21,7 @@ mongoose.connect(process.env.MONGODB_URI).then(function () {
 
 
 // SCHEMAS & MODELS
-// User Schema
+
 const userSchema = new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
@@ -38,7 +33,6 @@ const userSchema = new mongoose.Schema({
 })
 const User = mongoose.model("User", userSchema, "Users")
 
-// Category Schema
 const categorySchema = new mongoose.Schema({
   name: { type: String, required: true },
   description: { type: String, default: "" },
@@ -46,7 +40,6 @@ const categorySchema = new mongoose.Schema({
 })
 const Category = mongoose.model("Category", categorySchema, "Categories")
 
-// Product Schema
 const productSchema = new mongoose.Schema({
   name: { type: String, required: true },
   description: { type: String, default: "" },
@@ -61,7 +54,7 @@ const productSchema = new mongoose.Schema({
 })
 const Product = mongoose.model("Product", productSchema, "Products")
 
-// Coupon Schema
+
 const couponSchema = new mongoose.Schema({
   code: { type: String, required: true, unique: true, trim: true, uppercase: true },
   discountType: { type: String, enum: ["percentage", "flat"], required: true },
@@ -76,7 +69,6 @@ const couponSchema = new mongoose.Schema({
 })
 const Coupon = mongoose.model("Coupon", couponSchema, "Coupons")
 
-// Order Schema
 const orderSchema = new mongoose.Schema({
   items: { type: Array, default: [] },
   totalAmount: { type: Number, required: true },
@@ -88,7 +80,7 @@ const Order = mongoose.model("Order", orderSchema, "Orders")
 
 
 // AUTH ROUTES
-// Register
+
 app.post("/api/auth/register", async function (req, res) {
   try {
     const { name, email, password, mobile, address, role } = req.body
@@ -118,7 +110,6 @@ app.post("/api/auth/register", async function (req, res) {
   }
 })
 
-// Login
 app.post("/api/auth/login", async function (req, res) {
   try {
     const { email, password } = req.body
@@ -141,8 +132,6 @@ app.post("/api/auth/login", async function (req, res) {
   }
 })
 
-
-// Reset password
 app.post("/api/auth/reset-password", async function (req, res) {
   try {
     const { email, newPassword } = req.body
@@ -166,7 +155,7 @@ app.post("/api/auth/reset-password", async function (req, res) {
 
 
 // CATEGORY ROUTES
-// Get all categories
+
 app.get("/api/categories", async function (req, res) {
   try {
     const categories = await Category.find()
@@ -176,7 +165,6 @@ app.get("/api/categories", async function (req, res) {
   }
 })
 
-// Get products in a category
 app.get("/api/categories/:id/products", async function (req, res) {
   try {
     const category = await Category.findById(req.params.id)
@@ -190,7 +178,6 @@ app.get("/api/categories/:id/products", async function (req, res) {
   }
 })
 
-// Add a category
 app.post("/api/categories", async function (req, res) {
   try {
     const newCategory = new Category(req.body)
@@ -203,7 +190,7 @@ app.post("/api/categories", async function (req, res) {
 
 
 // PRODUCT ROUTES
-// Get all products
+
 app.get("/api/products", async function (req, res) {
   try {
     const { category, minPrice, maxPrice, sort, search, brand } = req.query
@@ -229,7 +216,6 @@ app.get("/api/products", async function (req, res) {
   }
 })
 
-// Get featured products
 app.get("/api/products/featured", async function (req, res) {
   try {
     const products = await Product.find().sort({ _id: -1 }).limit(8)
@@ -239,7 +225,6 @@ app.get("/api/products/featured", async function (req, res) {
   }
 })
 
-// Get deal products
 app.get("/api/products/deals", async function (req, res) {
   try {
     const deals = await Product.find({ isDeal: true })
@@ -249,7 +234,6 @@ app.get("/api/products/deals", async function (req, res) {
   }
 })
 
-// Get one product
 app.get("/api/products/:id", async function (req, res) {
   try {
     const product = await Product.findById(req.params.id)
@@ -260,7 +244,6 @@ app.get("/api/products/:id", async function (req, res) {
   }
 })
 
-// Add a product
 app.post("/api/products", async function (req, res) {
   try {
     const newProduct = new Product(req.body)
@@ -271,7 +254,6 @@ app.post("/api/products", async function (req, res) {
   }
 })
 
-// Update a product
 app.put("/api/products/:id", async function (req, res) {
   try {
     const updated = await Product.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true })
@@ -282,7 +264,6 @@ app.put("/api/products/:id", async function (req, res) {
   }
 })
 
-// Delete a product
 app.delete("/api/products/:id", async function (req, res) {
   try {
     const deleted = await Product.findByIdAndDelete(req.params.id)
@@ -293,7 +274,6 @@ app.delete("/api/products/:id", async function (req, res) {
   }
 })
 
-// Get all deals
 app.get("/api/deals", async function (req, res) {
   try {
     const deals = await Product.find({ isDeal: true })
@@ -303,9 +283,9 @@ app.get("/api/deals", async function (req, res) {
   }
 })
 
-
 // COUPON ROUTES
-// Validate coupon logic
+
+// Applies coupon eligibility rules and calculates the resulting discount for an order
 async function checkCoupon(code, orderAmount) {
   const coupon = await Coupon.findOne({ code: code.trim().toUpperCase() })
   if (!coupon) return { valid: false, reason: "Coupon not found" }
@@ -326,7 +306,6 @@ async function checkCoupon(code, orderAmount) {
   return { valid: true, discountAmount, finalAmount: orderAmount - discountAmount, coupon }
 }
 
-// Get all coupons
 app.get("/api/coupons", async function (req, res) {
   try {
     const coupons = await Coupon.find()
@@ -336,7 +315,6 @@ app.get("/api/coupons", async function (req, res) {
   }
 })
 
-// Get one coupon
 app.get("/api/coupons/:id", async function (req, res) {
   try {
     const coupon = await Coupon.findById(req.params.id)
@@ -347,7 +325,6 @@ app.get("/api/coupons/:id", async function (req, res) {
   }
 })
 
-// Add coupon
 app.post("/api/coupons", async function (req, res) {
   try {
     const newCoupon = new Coupon(req.body)
@@ -358,7 +335,6 @@ app.post("/api/coupons", async function (req, res) {
   }
 })
 
-// Update coupon
 app.put("/api/coupons/:id", async function (req, res) {
   try {
     const updated = await Coupon.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true })
@@ -369,7 +345,6 @@ app.put("/api/coupons/:id", async function (req, res) {
   }
 })
 
-// Delete coupon
 app.delete("/api/coupons/:id", async function (req, res) {
   try {
     const deleted = await Coupon.findByIdAndDelete(req.params.id)
@@ -380,7 +355,6 @@ app.delete("/api/coupons/:id", async function (req, res) {
   }
 })
 
-// Validate coupon
 app.post("/api/coupons/validate", async function (req, res) {
   try {
     const { code, orderAmount } = req.body
@@ -397,7 +371,7 @@ app.post("/api/coupons/validate", async function (req, res) {
 
 
 // ORDER ROUTES
-// Get all orders
+
 app.get("/api/orders", async function (req, res) {
   try {
     const orders = await Order.find()
@@ -407,7 +381,6 @@ app.get("/api/orders", async function (req, res) {
   }
 })
 
-// Create order
 app.post("/api/orders", async function (req, res) {
   try {
     const { items, totalAmount } = req.body
@@ -420,7 +393,6 @@ app.post("/api/orders", async function (req, res) {
   }
 })
 
-// Apply coupon to order
 app.post("/api/orders/applycoupon", async function (req, res) {
   try {
     const { orderId, couponCode } = req.body
@@ -441,7 +413,7 @@ app.post("/api/orders/applycoupon", async function (req, res) {
   }
 })
 
-// Get user profile by email
+// Looks up a user by email (query param) rather than by ID
 app.get("/api/auth/profile", async function (req, res) {
   try {
     const { email } = req.query

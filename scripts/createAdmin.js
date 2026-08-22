@@ -1,25 +1,21 @@
-// createAdmin.js
 // One-time script to create an Admin account directly in the database.
-// We do NOT expose "create admin" on the public signup page for security reasons
-// (otherwise anyone visiting the site could sign themselves up as an Admin).
-//
-// HOW TO USE:
-// 1. Open this file and change the values inside ADMIN_DETAILS below.
-// 2. Open a terminal in the "CouponX" root folder.
-// 3. Run:  npm run create-admin
-// 4. You should see "Admin account created successfully".
-// 5. Now log in on the Login page using the "Admin Login" tab with these credentials.
+// Admin creation is intentionally excluded from the public signup flow to prevent
+// unauthorized users from self-assigning the admin role.
+// Usage:
+// 1. Update ADMIN_DETAILS below with the desired admin credentials.
+// 2. From the project root, run: npm run create-admin
+// 3. On success, log in via the Login page's "Admin Login" tab.
 
 const path = require("path")
 const mongoose = require("mongoose")
 const dotenv = require("dotenv")
 dotenv.config({ path: path.join(__dirname, "../.env") })
 
-// ✏️ CHANGE THESE VALUES BEFORE RUNNING
+// Update these values before running the script
 const ADMIN_DETAILS = {
-  name: "Admin",
-  email: "adminuser@couponx.com",
-  password: "Admin@1234"
+  name: "[NAME]",
+  email: "[EMAIL_ADDRESS]",
+  password: "[PASSWORD]"
 }
 
 // Same User schema as in server.js

@@ -146,7 +146,7 @@ function renderCartDrawer() {
   cartSummary.textContent = totalItems + " item" + (totalItems !== 1 ? "s" : "");
   cartTotal.textContent = "₹" + totalPrice.toLocaleString("en-IN");
 
-  // Refresh the discount + final total rows in the sidebar footer
+  // Update the discount and total amounts shown in the cart sidebar
   refreshCartTotals(totalPrice);
   updateSelectCouponAvailability(cart.length > 0);
 
@@ -237,7 +237,6 @@ function refreshCartTotals(subtotal) {
   }
 }
 
-// Enable/disable the "Select Coupon" button based on whether the cart has items
 function updateSelectCouponAvailability(hasItems) {
   const selectCouponBtn = document.getElementById("selectCouponBtn");
   if (!selectCouponBtn) return;
@@ -281,7 +280,6 @@ function resetCouponState() {
   updateCouponRowUI();
 }
 
-// Describe a coupon's discount in human-readable form
 function describeCouponDiscount(coupon) {
   if (coupon.discountType === "percentage") {
     let text = coupon.discountValue + "% off";
@@ -449,7 +447,7 @@ function setupCartSidebarActions() {
   });
 }
 
-// LOAD CATEGORIES + PRODUCTS (once)
+// LOAD CATEGORIES AND PRODUCTS (runs once on page load)
 async function loadCategories() {
   try {
     const [categoriesRes, productsRes] = await Promise.all([
@@ -491,7 +489,6 @@ function renderCategories() {
     const imagePath = categoryImages[category.name];
     const tileStyle = getCategoryTileStyle(category.name);
 
-    // Image tile
     const imageTileHtml = imagePath
       ? '<div class="w-11 h-11 sm:w-14 sm:h-14 shrink-0 rounded-md overflow-hidden bg-gray-50 flex items-center justify-center">' +
         '  <img src="' + imagePath + '" alt="' + category.name + '" class="categoryImg w-full h-full object-cover" />' +
@@ -572,7 +569,6 @@ function renderCategoryProducts(products) {
     const { rating, reviewCount } = getProductRating(product);
     const hasImage = !!product.image;
 
-    // Image tile
     const imageTileHtml = hasImage
       ? '<div class="h-16 sm:h-28 bg-gray-50 rounded-md mb-2 sm:mb-3 overflow-hidden flex items-center justify-center">' +
         '  <img src="' + product.image + '" alt="' + product.name + '" class="productImg w-full h-full object-contain" />' +

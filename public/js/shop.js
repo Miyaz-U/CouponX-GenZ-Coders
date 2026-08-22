@@ -1,4 +1,3 @@
-// ELEMENTS
 const categoryFiltersBox = document.getElementById("categoryFilters")
 const brandFiltersBox = document.getElementById("brandFilters")
 const maxPriceInput = document.getElementById("maxPriceInput")
@@ -19,12 +18,11 @@ const paginationControls = document.getElementById("paginationControls")
 let allCategories = []
 let allProducts = []
 
-// PAGINATION STATE (shop products grid)
+// Pagination state for the products grid
 const PRODUCTS_PER_PAGE = 12
 let currentFilteredProducts = []
 let currentPage = 1
 
-// CART
 function getCart() {
   return JSON.parse(localStorage.getItem("couponXCart")) || []
 }
@@ -45,7 +43,6 @@ function getEffectivePrice(product) {
   return product.isDeal && product.dealPrice ? product.dealPrice : product.price
 }
 
-// CATEGORY TILE COLORS 
 const categoryTileStyles = {
   "Laptops": { bg: "bg-purple-100" },
   "Accessories": { bg: "bg-blue-100" },
@@ -60,7 +57,7 @@ function getCategoryTileStyle(category) {
   return categoryTileStyles[category] || defaultTileStyle
 }
 
-// Deterministic pseudo rating/review-count per product
+// Generates a consistent (but fabricated) rating and review count, since no real review data exists
 function hashString(str) {
   let hash = 0
   for (let i = 0; i < str.length; i++) {
@@ -71,7 +68,7 @@ function hashString(str) {
 
 function getProductRating(product) {
   const hash = hashString(product._id || product.name)
-  const rating = 3.5 + (hash % 15) / 10 // 3.5 - 5.0
+  const rating = 3.5 + (hash % 15) / 10 // Maps the hash to a rating between 3.5 and 5.0
   const reviewCount = 20 + (hash % 300)
   return { rating: Math.round(rating * 2) / 2, reviewCount: reviewCount }
 }
@@ -130,7 +127,6 @@ function removeFromCart(productId) {
   showToast("Removed from cart")
 }
 
-// CART DRAWER
 function renderCartDrawer() {
   const cart = getCart()
   const cartItems = document.getElementById("cartItems")
@@ -144,7 +140,7 @@ function renderCartDrawer() {
   cartSummary.textContent = totalItems + " item" + (totalItems !== 1 ? "s" : "")
   cartTotal.textContent = "₹" + totalPrice.toLocaleString("en-IN")
 
-  // Refresh the discount + final total rows in the sidebar footer
+  // Update the discount and total amounts shown in the cart summary
   refreshCartTotals(totalPrice)
   updateSelectCouponAvailability(cart.length > 0)
 
@@ -203,7 +199,6 @@ function setupCart() {
   document.getElementById("cartBackdrop").addEventListener("click", closeCart)
 }
 
-// TOAST
 function showToast(message) {
   const toast = document.getElementById("toast")
   if (!toast) return
@@ -212,8 +207,8 @@ function showToast(message) {
   setTimeout(function () { toast.classList.add("opacity-0") }, 2000)
 }
 
-// CART SIDEBAR — COUPON & PAY
-let appliedCoupon = null // { code, discountAmount }
+// Cart sidebar: coupon selection and payment handling
+let appliedCoupon = null // Shape: { code: string, discountAmount: number }
 
 function refreshCartTotals(subtotal) {
   const finalTotalEl = document.getElementById("cartFinalTotal")
@@ -235,7 +230,7 @@ function refreshCartTotals(subtotal) {
   }
 }
 
-// Enable/disable the "Select Coupon" button based on whether the cart has items
+// Enables the "Select Coupon" button only when the cart has items
 function updateSelectCouponAvailability(hasItems) {
   const selectCouponBtn = document.getElementById("selectCouponBtn")
   if (!selectCouponBtn) return
@@ -244,7 +239,7 @@ function updateSelectCouponAvailability(hasItems) {
   selectCouponBtn.classList.toggle("cursor-not-allowed", !hasItems)
 }
 
-// Toggle between "Select Coupon" button and "Coupon applied" chip
+// Switches the UI between the "Select Coupon" button and the applied-coupon chip
 function updateCouponRowUI() {
   const selectRow = document.getElementById("couponSelectRow")
   const appliedRow = document.getElementById("appliedCouponRow")
@@ -279,7 +274,7 @@ function resetCouponState() {
   updateCouponRowUI()
 }
 
-// Describe a coupon's discount in human-readable form
+// Formats a coupon's discount as a human-readable string
 function describeCouponDiscount(coupon) {
   if (coupon.discountType === "percentage") {
     let text = coupon.discountValue + "% off"
@@ -296,7 +291,6 @@ function formatExpiry(dateStr) {
   return d.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })
 }
 
-// COUPON SELECTION MODAL
 function openCouponModal() {
   document.getElementById("couponModalBackdrop").classList.remove("hidden")
   document.getElementById("couponModalBackdrop").classList.add("flex")
@@ -398,7 +392,6 @@ async function applyCouponByCode(code) {
 }
 
 function setupCartSidebarActions() {
-  // Open coupon modal
   document.getElementById("selectCouponBtn").addEventListener("click", openCouponModal)
   document.getElementById("changeCouponBtn").addEventListener("click", openCouponModal)
   document.getElementById("closeCouponModal").addEventListener("click", closeCouponModal)
@@ -406,7 +399,6 @@ function setupCartSidebarActions() {
     if (e.target === this) closeCouponModal()
   })
 
-  // Remove applied coupon
   document.getElementById("removeCouponBtn").addEventListener("click", function () {
     const cart = getCart()
     const subtotal = cart.reduce(function (sum, item) { return sum + item.price * item.quantity }, 0)
@@ -414,7 +406,6 @@ function setupCartSidebarActions() {
     refreshCartTotals(subtotal)
   })
 
-  // Pay
   document.getElementById("payBtn").addEventListener("click", function () {
     const cart = getCart()
     if (!cart.length) {
@@ -426,13 +417,11 @@ function setupCartSidebarActions() {
     const discount = appliedCoupon ? appliedCoupon.discountAmount : 0
     const finalAmount = Math.max(0, subtotal - discount)
 
-    // Clear cart
     saveCart([])
     updateCartCountBadge()
     resetCouponState()
     renderCartDrawer()
 
-    // Show success message
     const paySuccess = document.getElementById("paySuccess")
     paySuccess.textContent = "The amount of ₹" + finalAmount.toLocaleString("en-IN") + " paid successfully."
     paySuccess.classList.remove("hidden")
@@ -447,7 +436,6 @@ function setupCartSidebarActions() {
   })
 }
 
-// PRICE SLIDER RANGE
 function setupPriceRangeFromProducts() {
   if (allProducts.length === 0) return
 
@@ -464,7 +452,6 @@ function setupPriceRangeFromProducts() {
   updateMaxPriceLabel()
 }
 
-// LOAD DATA (once)
 async function loadShopData() {
   try {
     const [categoriesRes, productsRes] = await Promise.all([
@@ -492,7 +479,6 @@ async function loadShopData() {
   }
 }
 
-// BUILD FILTER CHECKBOXES
 function isDesktopFiltersLive() {
   return window.matchMedia("(min-width: 768px)").matches
 }
@@ -545,7 +531,6 @@ function getCheckedValues(className) {
   })
 }
 
-// FILTER + SORT + RENDER
 function updateMaxPriceLabel() {
   maxPriceValueLabel.textContent = "₹" + Number(maxPriceInput.value).toLocaleString("en-IN")
 }
@@ -617,7 +602,6 @@ function renderProducts(products) {
     const { rating, reviewCount } = getProductRating(product)
     const hasImage = !!product.image
 
-    // Image tile
     const imageTileHtml = hasImage
       ? '<div class="h-28 bg-gray-50 rounded-md mb-3 overflow-hidden flex items-center justify-center">' +
         '  <img src="' + product.image + '" alt="' + product.name + '" class="productImg w-full h-full object-contain" />' +
@@ -714,7 +698,6 @@ function renderPaginationControls(totalPages) {
 
   let html = '<div class="flex flex-wrap items-center justify-center gap-1.5">'
 
-  // Prev button
   html += '<button type="button" data-page="' + (currentPage - 1) + '" ' +
     (currentPage === 1 ? 'disabled' : '') +
     ' class="pageNavBtn ' + (currentPage === 1 ? disabledBtn : inactiveBtn) + '" aria-label="Previous page">‹</button>'
@@ -735,7 +718,6 @@ function renderPaginationControls(totalPages) {
   // Compact "X / Y" indicator shown only on the smallest screens
   html += '<span class="sm:hidden text-sm text-gray-600 px-2 select-none">' + currentPage + ' / ' + totalPages + '</span>'
 
-  // Next button
   html += '<button type="button" data-page="' + (currentPage + 1) + '" ' +
     (currentPage === totalPages ? 'disabled' : '') +
     ' class="pageNavBtn ' + (currentPage === totalPages ? disabledBtn : inactiveBtn) + '" aria-label="Next page">›</button>'
@@ -752,7 +734,6 @@ function renderPaginationControls(totalPages) {
   })
 }
 
-// EVENTS
 searchInput.addEventListener("input", applyFilters)
 sortSelect.addEventListener("change", applyFilters)
 maxPriceInput.addEventListener("input", function () {
@@ -772,13 +753,11 @@ clearFiltersBtn.addEventListener("click", function () {
   applyFilters()
 });
 
-// INIT
 updateCartCountBadge()
 setupCart()
 setupCartSidebarActions()
 loadShopData()
 
-// CUSTOMER LOGOUT
 const logoutBtn = document.getElementById("logoutBtn");
 
 if (logoutBtn) {
@@ -787,7 +766,7 @@ if (logoutBtn) {
     window.location.href = "login.html";
   });
 }
-// PROFILE DROPDOWN
+
 (function () {
   const profileBtn = document.getElementById("profileBtn");
   const profileDropdown = document.getElementById("profileDropdown");

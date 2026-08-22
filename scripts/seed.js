@@ -6,18 +6,28 @@ dotenv.config({ path: path.join(__dirname, "../.env") })
 mongoose.connect(process.env.MONGODB_URI).then(async function () {
   console.log("Connected. Seeding...")
 
+  // Same Category schema as in server.js
   const Category = mongoose.model("Category", new mongoose.Schema({
     name: String, description: String, image: String
   }), "Categories")
 
+  // Same Product schema as in server.js
   const Product = mongoose.model("Product", new mongoose.Schema({
     name: String, description: String, price: Number,
     category: String, brand: String, stock: Number,
     image: String, isDeal: Boolean, dealPrice: Number, dealDiscountPercent: Number
   }), "Products")
 
+  // Same Coupon schema as in server.js
+  const Coupon = mongoose.model("Coupon", new mongoose.Schema({
+    code: String, discountType: String, discountValue: Number,
+    minPurchaseAmount: Number, maxDiscountAmount: Number, expiryDate: Date,
+    usageLimit: Number, usedCount: Number, status: String
+  }), "Coupons")
+
   await Category.deleteMany({})
   await Product.deleteMany({})
+  await Coupon.deleteMany({})
 
   await Category.insertMany([
     { name: "Laptops", description: "Portable computers", image: "images/categories/Laptops.jpeg" },
@@ -89,6 +99,13 @@ mongoose.connect(process.env.MONGODB_URI).then(async function () {
     { name: "SanDisk 128GB Pen Drive", description: "USB 3.0 flash drive", price: 900, category: "Storage", brand: "SanDisk", stock: 80, image: "images/products/SanDisk128GBPenDrive.jpeg", isDeal: true, dealPrice: 765, dealDiscountPercent: 15 },
     { name: "Seagate 1TB External HDD", description: "Portable external hard drive", price: 4500, category: "Storage", brand: "Seagate", stock: 26, image: "images/products/Seagate1TBExternalHDD.jpeg", isDeal: false, dealPrice: null, dealDiscountPercent: null },
     { name: "Samsung 256GB microSD Card", description: "High speed microSD memory card", price: 1600, category: "Storage", brand: "Samsung", stock: 55, image: "images/products/Samsung256GBMicroSDCard.jpeg", isDeal: true, dealPrice: 1360, dealDiscountPercent: 15 }
+  ])
+
+  await Coupon.insertMany([
+    { code: "SUMMER20", discountType: "percentage", discountValue: 20, minPurchaseAmount: 1000, maxDiscountAmount: null, expiryDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), usageLimit: null, usedCount: 0, status: "active" },
+    { code: "WEEKEND15", discountType: "percentage", discountValue: 15, minPurchaseAmount: 2000, maxDiscountAmount: null, expiryDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), usageLimit: null, usedCount: 0, status: "active" },
+    { code: "FLASH500", discountType: "flat", discountValue: 500, minPurchaseAmount: 5000, maxDiscountAmount: null, expiryDate: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000), usageLimit: null, usedCount: 0, status: "active" },
+    { code: "NEW10", discountType: "percentage", discountValue: 10, minPurchaseAmount: 500, maxDiscountAmount: null, expiryDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000), usageLimit: null, usedCount: 0, status: "active" }
   ])
 
   console.log("Seeding done!")

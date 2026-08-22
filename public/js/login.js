@@ -9,7 +9,7 @@ function isValidEmail(value) {
   return emailPattern.test(value)
 }
 
-// Show/Hide password logic
+// Show/Hide password
 togglePasswordBtn.addEventListener("click", function () {
   if (passwordInput.type === "password") {
     passwordInput.type = "text"
@@ -20,7 +20,6 @@ togglePasswordBtn.addEventListener("click", function () {
   }
 });
 
-// Form submit logic
 loginForm.addEventListener("submit", function (event) {
   event.preventDefault()
   const email = document.getElementById("email").value.trim()
@@ -92,7 +91,7 @@ loginForm.addEventListener("submit", function (event) {
     })
 });
 
-// Show/Hide password logic
+// Show/Hide password
 const signupPasswordInput = document.getElementById("signupPassword")
 const toggleSignupPasswordBtn = document.getElementById("toggleSignupPasswordBtn")
 const signupConfirmPasswordInput = document.getElementById("signupConfirmPassword")
@@ -118,7 +117,7 @@ toggleSignupConfirmPasswordBtn.addEventListener("click", function () {
   }
 });
 
-// SIGNUP
+// LOGIN/SIGNUP VIEW TOGGLE
 const signupForm = document.getElementById("signupForm")
 const showSignupBtn = document.getElementById("showSignupBtn")
 const showLoginBtn = document.getElementById("showLoginBtn")
@@ -251,7 +250,6 @@ const toggleForgotNewPasswordBtn = document.getElementById("toggleForgotNewPassw
 const forgotConfirmPasswordInput = document.getElementById("forgotConfirmPassword")
 const toggleForgotConfirmPasswordBtn = document.getElementById("toggleForgotConfirmPasswordBtn")
 
-// Show forgot-password form
 showForgotBtn.addEventListener("click", function (event) {
   event.preventDefault()
   loginForm.classList.add("hidden")
@@ -260,14 +258,13 @@ showForgotBtn.addEventListener("click", function (event) {
   forgotSuccessMsg.classList.add("hidden")
 });
 
-// Back to login from forgot-password form
 backToLoginFromForgotBtn.addEventListener("click", function () {
   forgotForm.classList.add("hidden")
   loginForm.classList.remove("hidden")
   errorMsg.classList.add("hidden")
 });
 
-// Show/Hide password logic
+// Show/Hide password
 toggleForgotNewPasswordBtn.addEventListener("click", function () {
   if (forgotNewPasswordInput.type === "password") {
     forgotNewPasswordInput.type = "text"
@@ -288,7 +285,6 @@ toggleForgotConfirmPasswordBtn.addEventListener("click", function () {
   }
 });
 
-// Submit new password
 forgotForm.addEventListener("submit", function (event) {
   event.preventDefault()
 

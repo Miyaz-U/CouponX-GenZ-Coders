@@ -83,7 +83,7 @@ function renderCartDrawer() {
   cartSummary.textContent = totalItems + " item" + (totalItems !== 1 ? "s" : "");
   cartTotal.textContent = "₹" + totalPrice.toLocaleString("en-IN");
 
-  // Refresh the discount + final total rows in the new sidebar footer
+  // Update the discount and total amounts shown in the cart sidebar
   refreshCartTotals(totalPrice);
   updateSelectCouponAvailability(cart.length > 0);
 
@@ -150,7 +150,7 @@ function showToast(message) {
   setTimeout(function () { toast.classList.add("opacity-0"); }, 2000);
 }
 
-// RATING HELPERS
+// RATING HELPERS — generates a deterministic pseudo rating and review count per product (not real user data)
 function hashString(str) {
   let hash = 0;
   for (let i = 0; i < str.length; i++) {
@@ -273,8 +273,8 @@ function buildPageNumberSequence(current, total) {
   return pages
 }
 
-// Renders Prev/Next + numbered page controls into containerId.
-// onPageChange(page) is called whenever the user picks a different page.
+// Renders Prev/Next and numbered page controls into containerId.
+// onPageChange(page) is called whenever the user picks a different page
 function renderPaginationControls(containerId, currentPage, totalPages, onPageChange) {
   const container = document.getElementById(containerId)
   if (!container) return
@@ -693,7 +693,7 @@ if (logoutBtn) {
   });
 })();
 // CART SIDEBAR — COUPON & PAY
-let appliedCoupon = null; // { code, discountAmount, discountType, discountValue }
+let appliedCoupon = null; // { code, discountAmount } — set in applyCouponByCode()
 
 function refreshCartTotals(subtotal) {
   const finalTotalEl = document.getElementById("cartFinalTotal");
@@ -715,7 +715,6 @@ function refreshCartTotals(subtotal) {
   }
 }
 
-// Enable/disable the "Select Coupon" button based on whether the cart has items
 function updateSelectCouponAvailability(hasItems) {
   const selectCouponBtn = document.getElementById("selectCouponBtn");
   if (!selectCouponBtn) return;
@@ -759,7 +758,6 @@ function resetCouponState() {
   updateCouponRowUI();
 }
 
-// Describe a coupon's discount in human-readable form
 function describeCouponDiscount(coupon) {
   if (coupon.discountType === "percentage") {
     let text = coupon.discountValue + "% off";

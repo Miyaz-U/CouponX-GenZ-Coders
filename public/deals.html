@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CouponX - Deals</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <header class="bg-white shadow-sm">
+        <div class="w-full flex items-center justify-between px-6 lg:px-12 py-4">
+            <a href="home.html" class="text-xl font-bold text-purple-600">CouponX</a>
+            <nav class="hidden md:flex gap-6 text-sm font-medium text-gray-700">
+                <a href="home.html" class="hover:text-purple-600">Home</a>
+                <a href="shop.html" class="hover:text-purple-600">Shop</a>
+                <a href="categories.html" class="hover:text-purple-600">Categories</a>
+                <a href="deals.html" class="text-purple-600">Deals</a>
+            </nav>
+            <div class="flex items-center gap-4">
+                <button id="cartIconBtn" class="relative text-gray-700">
+                    🛒
+                    <span id="cartCount" class="absolute -top-2 -right-3 bg-purple-600 text-white text-xs rounded-full px-1.5">0</span>
+                </button>
+                <div class="relative">
+                    <button id="profileBtn" class="text-sm font-medium bg-gray-100 text-gray-700 px-3 py-1 rounded-lg hover:bg-gray-200 transition">
+                        👤 Profile
+                    </button>
+                    <div id="profileDropdown" class="hidden fixed inset-x-4 top-16 z-50 sm:absolute sm:inset-x-auto sm:right-0 sm:top-auto sm:mt-2 sm:w-72 bg-white border border-gray-200 rounded-xl shadow-lg p-4">
+                        <p class="text-xs font-semibold text-gray-400 uppercase mb-3">My Account</p>
+                        <div class="space-y-2 text-sm text-gray-700">
+                            <div><span class="font-medium text-gray-500">Name:</span> <span id="profileName">—</span></div>
+                            <div><span class="font-medium text-gray-500">Email:</span> <span id="profileEmail">—</span></div>
+                            <div><span class="font-medium text-gray-500">Mobile:</span> <span id="profileMobile">—</span></div>
+                            <div><span class="font-medium text-gray-500">Address:</span> <span id="profileAddress">—</span></div>
+                        </div>
+                    </div>
+                </div>
+                <button id="logoutBtn" class="text-sm font-medium bg-purple-600 text-white px-3 py-1 rounded-lg hover:bg-purple-700 transition">
+                    Logout
+                </button>
+                <button id="mobileMenuBtn" type="button" aria-label="Toggle menu" aria-expanded="false"
+                    onclick="document.getElementById('mobileNavPanel').classList.toggle('hidden'); document.getElementById('mobileNavPanel').classList.toggle('flex'); this.setAttribute('aria-expanded', this.getAttribute('aria-expanded') === 'true' ? 'false' : 'true');"
+                    class="md:hidden text-gray-700 text-xl leading-none px-1">
+                    ☰
+                </button>
+            </div>
+        </div>
+        <nav id="mobileNavPanel" class="hidden md:hidden flex-col gap-1 border-t border-gray-100 px-6 py-3 text-sm font-medium text-gray-700">
+            <a href="home.html" class="py-2 hover:text-purple-600">Home</a>
+            <a href="shop.html" class="py-2 hover:text-purple-600">Shop</a>
+            <a href="categories.html" class="py-2 hover:text-purple-600">Categories</a>
+            <a href="deals.html" class="py-2 text-purple-600">Deals</a>
+        </nav>
+    </header>
+
+    <main class="w-full px-6 lg:px-12 py-8">
+        <nav class="text-sm text-gray-500 mb-4">
+            <a href="home.html" class="hover:underline">Home</a> &gt;
+            <span class="text-purple-600">Deals</span>
+        </nav>
+
+        <section class="relative overflow-hidden rounded-xl bg-gradient-to-r from-purple-700 via-purple-600 to-purple-400 px-8 py-10 text-white mb-8">
+            <div class="relative z-10 max-w-lg">
+                <p class="mb-2 text-xs font-bold tracking-widest text-purple-100 uppercase">Hot Right Now</p>
+                <h1 class="text-2xl font-bold leading-tight sm:text-3xl">
+                    Featured picks &amp; today's best deals.
+                </h1>
+                <p class="mt-2 text-sm leading-relaxed text-purple-50">
+                    Hand-picked featured products plus everything currently on sale — all in one place.
+                </p>
+            </div>
+            <div class="pointer-events-none absolute right-8 top-1/2 -translate-y-1/2 hidden sm:block">
+                <div class="h-24 w-24 rounded-full bg-white/10"></div>
+            </div>
+        </section>
+
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="text-base font-semibold text-gray-800">Featured &amp; Deal Products</h2>
+            <p id="resultsCount" class="text-sm text-gray-500"></p>
+        </div>
+
+        <p id="loadingMsg" class="text-gray-500">Loading products...</p>
+        <p id="errorMsg" class="text-red-600 hidden"></p>
+        <p id="noResultsMsg" class="hidden text-gray-500">No featured or deal products available right now.</p>
+        <div id="productsGrid" class="grid grid-cols-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3 sm:gap-4"></div>
+        <div id="paginationControls" class="mt-6"></div>
+    </main>
+
+    <aside id="cartDrawer"
+        class="fixed inset-y-0 right-0 z-50 w-full max-w-sm translate-x-full border-l border-gray-200 bg-white shadow-2xl transition-transform duration-300">
+        <div class="flex h-full flex-col">
+            <div class="flex items-center justify-between border-b px-5 py-4">
+                <div>
+                    <h3 class="text-sm font-bold text-gray-800">Your Cart</h3>
+                    <p id="cartSummary" class="mt-0.5 text-xs text-gray-400">0 items</p>
+                </div>
+                <button id="closeCart"
+                    class="grid h-8 w-8 place-items-center rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-600 text-lg font-bold">
+                    ✕
+                </button>
+            </div>
+            <div id="cartItems" class="flex-1 overflow-y-auto p-5"></div>
+            <div class="border-t p-5 space-y-3">
+                <div id="couponSelectRow"
+                    class="flex items-center justify-between gap-2 rounded-lg border border-dashed border-purple-300 bg-purple-50 px-3 py-2">
+                    <span class="flex items-center gap-1.5 text-xs font-medium text-purple-700">
+                        🏷️ Have a coupon?
+                    </span>
+                    <button id="selectCouponBtn" disabled
+                        class="rounded-lg bg-purple-600 px-3 py-1.5 text-xs font-semibold text-white opacity-50 cursor-not-allowed hover:bg-purple-700 transition">
+                        Select Coupon
+                    </button>
+                </div>
+                <div id="appliedCouponRow"
+                    class="hidden items-center justify-between gap-2 rounded-lg border border-green-300 bg-green-50 px-3 py-2">
+                    <div class="text-xs leading-snug">
+                        <p class="font-semibold text-green-700">🏷️ <span id="appliedCouponCode"></span> applied</p>
+                        <p id="appliedCouponSavings" class="text-green-600"></p>
+                    </div>
+                    <div class="flex shrink-0 items-center gap-2">
+                        <button id="changeCouponBtn" class="text-xs font-medium text-purple-600 hover:underline">Change</button>
+                        <button id="removeCouponBtn" class="text-xs font-medium text-red-500 hover:underline">Remove</button>
+                    </div>
+                </div>
+                <p id="couponMsg" class="text-xs hidden"></p>
+                <div class="flex items-center justify-between text-sm">
+                    <span class="text-gray-500">Subtotal</span>
+                    <span id="cartTotal">₹0</span>
+                </div>
+                <div id="discountRow" class="hidden flex items-center justify-between text-sm">
+                    <span class="text-green-600">Discount (<span id="couponLabel"></span>)</span>
+                    <span id="discountAmt" class="text-green-600">-₹0</span>
+                </div>
+                <div class="flex items-center justify-between text-sm font-bold border-t pt-2">
+                    <span>Total</span>
+                    <span id="cartFinalTotal">₹0</span>
+                </div>
+                <button id="payBtn"
+                    class="block w-full rounded-lg bg-purple-600 py-2.5 text-center text-sm font-semibold text-white hover:bg-purple-700 transition">
+                    Pay
+                </button>
+                <!-- Payment success message, shown after checkout completes -->
+                <div id="paySuccess" class="hidden rounded-lg bg-green-50 border border-green-200 p-3 text-center text-sm font-medium text-green-700"></div>
+            </div>
+        </div>
+    </aside>
+    <div id="cartBackdrop" class="fixed inset-0 z-40 hidden bg-gray-900/30"></div>
+
+    <div id="couponModalBackdrop"
+        class="fixed inset-0 z-[70] hidden items-center justify-center bg-gray-900/40 px-4">
+        <div class="flex max-h-[80vh] w-full max-w-sm flex-col rounded-2xl bg-white shadow-2xl">
+            <div class="flex items-center justify-between border-b px-5 py-4">
+                <h3 class="text-sm font-bold text-gray-800">Available Coupons</h3>
+                <button id="closeCouponModal"
+                    class="grid h-8 w-8 place-items-center rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-600 text-lg font-bold">
+                    ✕
+                </button>
+            </div>
+            <div id="couponListContainer" class="flex-1 space-y-3 overflow-y-auto p-4">
+                <p class="text-sm text-gray-400">Loading coupons...</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast"
+        class="pointer-events-none fixed bottom-4 left-1/2 z-[60] -translate-x-1/2 rounded-lg bg-gray-900 px-4 py-2 text-xs font-medium text-white opacity-0 shadow-lg transition-all">
+    </div>
+    <script src="js/deals.js"></script>
+</body>
+</html>
