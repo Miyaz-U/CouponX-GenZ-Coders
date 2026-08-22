@@ -493,30 +493,30 @@ function renderCategories() {
 
     // Image tile
     const imageTileHtml = imagePath
-      ? '<div class="w-14 h-14 shrink-0 rounded-md overflow-hidden bg-gray-50 flex items-center justify-center">' +
+      ? '<div class="w-11 h-11 sm:w-14 sm:h-14 shrink-0 rounded-md overflow-hidden bg-gray-50 flex items-center justify-center">' +
         '  <img src="' + imagePath + '" alt="' + category.name + '" class="categoryImg w-full h-full object-cover" />' +
         '</div>'
-      : '<div class="w-14 h-14 shrink-0 ' + tileStyle.bg + ' border-2 border-dashed border-gray-300 rounded-md flex items-center justify-center text-center px-1">' +
+      : '<div class="w-11 h-11 sm:w-14 sm:h-14 shrink-0 ' + tileStyle.bg + ' border-2 border-dashed border-gray-300 rounded-md flex items-center justify-center text-center px-1">' +
         '  <span class="text-[10px] text-gray-400 leading-tight">Image<br/>placeholder</span>' +
         '</div>';
 
     const card = document.createElement("button");
     card.type = "button";
     card.className =
-      "flex items-center gap-4 bg-white border border-gray-200 rounded-lg p-5 hover:shadow-md hover:border-purple-300 transition text-left w-full";
+      "flex items-center gap-2.5 sm:gap-4 bg-white border border-gray-200 rounded-lg p-3 sm:p-5 hover:shadow-md hover:border-purple-300 transition text-left w-full min-w-0";
 
     card.innerHTML =
       imageTileHtml +
-      '<div>' +
-      '  <h3 class="font-semibold text-gray-800">' + category.name + '</h3>' +
-      '  <p class="text-sm text-gray-500">' + productCount + ' products</p>' +
+      '<div class="min-w-0">' +
+      '  <h3 class="font-semibold text-gray-800 text-sm sm:text-base truncate">' + category.name + '</h3>' +
+      '  <p class="text-xs sm:text-sm text-gray-500">' + productCount + ' products</p>' +
       '</div>';
 
     if (imagePath) {
       const imgEl = card.querySelector(".categoryImg");
       imgEl.addEventListener("error", function () {
         const tile = imgEl.parentElement;
-        tile.className = "w-14 h-14 shrink-0 " + tileStyle.bg + " border-2 border-dashed border-gray-300 rounded-md flex items-center justify-center text-center px-1";
+        tile.className = "w-11 h-11 sm:w-14 sm:h-14 shrink-0 " + tileStyle.bg + " border-2 border-dashed border-gray-300 rounded-md flex items-center justify-center text-center px-1";
         tile.innerHTML = '<span class="text-[10px] text-gray-400 leading-tight">Image<br/>placeholder</span>';
       });
     }
@@ -565,7 +565,7 @@ function renderCategoryProducts(products) {
 
   products.forEach(function (product) {
     const card = document.createElement("div");
-    card.className = "bg-white border border-gray-200 rounded-lg p-4 flex flex-col transition duration-200 hover:shadow-lg hover:border-purple-300 hover:-translate-y-1";
+    card.className = "bg-white border border-gray-200 rounded-lg p-2 sm:p-4 flex flex-col transition duration-200 hover:shadow-lg hover:border-purple-300 hover:-translate-y-1 min-w-0";
 
     const showDealPrice = product.isDeal && product.dealPrice;
     const tileStyle = getCategoryTileStyle(product.category);
@@ -574,29 +574,29 @@ function renderCategoryProducts(products) {
 
     // Image tile
     const imageTileHtml = hasImage
-      ? '<div class="h-28 bg-gray-50 rounded-md mb-3 overflow-hidden flex items-center justify-center">' +
+      ? '<div class="h-16 sm:h-28 bg-gray-50 rounded-md mb-2 sm:mb-3 overflow-hidden flex items-center justify-center">' +
         '  <img src="' + product.image + '" alt="' + product.name + '" class="productImg w-full h-full object-contain" />' +
         '</div>'
-      : '<div class="h-28 ' + tileStyle.bg + ' border-2 border-dashed border-gray-300 rounded-md mb-3 flex items-center justify-center text-center px-2">' +
-        '  <span class="text-xs text-gray-400">Product image<br/>placeholder</span>' +
+      : '<div class="h-16 sm:h-28 ' + tileStyle.bg + ' border-2 border-dashed border-gray-300 rounded-md mb-2 sm:mb-3 flex items-center justify-center text-center px-1 sm:px-2">' +
+        '  <span class="text-[9px] sm:text-xs text-gray-400 leading-tight">Product image<br/>placeholder</span>' +
         '</div>';
 
     card.innerHTML =
       imageTileHtml +
-      '<div class="flex items-center gap-1 text-xs text-amber-500 mb-1">' +
+      '<div class="flex items-center gap-1 text-[10px] sm:text-xs text-amber-500 mb-1">' +
       '  <span>' + renderStars(rating) + '</span>' +
       '  <span class="text-gray-400">(' + reviewCount + ')</span>' +
       '</div>' +
-      '<h3 class="font-semibold text-gray-800 text-sm mb-1">' + product.name + '</h3>' +
-      '<p class="text-xs text-gray-500 mb-2">' + product.category + '</p>' +
-      '<div class="mt-auto flex items-center justify-between">' +
-      '  <div>' +
+      '<h3 class="font-semibold text-gray-800 text-xs sm:text-sm mb-1 truncate">' + product.name + '</h3>' +
+      '<p class="text-[10px] sm:text-xs text-gray-500 mb-2 truncate">' + product.category + '</p>' +
+      '<div class="mt-auto flex items-center justify-between gap-1">' +
+      '  <div class="min-w-0 truncate">' +
       (showDealPrice
-        ? '<span class="font-bold text-gray-800">₹' + product.dealPrice.toLocaleString() + '</span> ' +
-          '<span class="text-xs text-gray-400 line-through">₹' + product.price.toLocaleString() + '</span>'
-        : '<span class="font-bold text-gray-800">₹' + product.price.toLocaleString() + '</span>') +
+        ? '<span class="font-bold text-gray-800 text-xs sm:text-base">₹' + product.dealPrice.toLocaleString() + '</span> ' +
+          '<span class="text-[10px] sm:text-xs text-gray-400 line-through">₹' + product.price.toLocaleString() + '</span>'
+        : '<span class="font-bold text-gray-800 text-xs sm:text-base">₹' + product.price.toLocaleString() + '</span>') +
       '  </div>' +
-      '  <button class="addToCartBtn w-7 h-7 flex items-center justify-center bg-purple-600 text-white text-sm font-bold rounded-full hover:bg-purple-700" aria-label="Add to cart">' +
+      '  <button class="addToCartBtn w-6 h-6 sm:w-7 sm:h-7 shrink-0 flex items-center justify-center bg-purple-600 text-white text-sm font-bold rounded-full hover:bg-purple-700" aria-label="Add to cart">' +
       '    +' +
       '  </button>' +
       '</div>';

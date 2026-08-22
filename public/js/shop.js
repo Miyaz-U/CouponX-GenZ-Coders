@@ -6,6 +6,7 @@ const maxPriceValueLabel = document.getElementById("maxPriceValueLabel")
 const searchInput = document.getElementById("searchInput")
 const sortSelect = document.getElementById("sortSelect")
 const clearFiltersBtn = document.getElementById("clearFiltersBtn")
+const applyFiltersBtn = document.getElementById("applyFiltersBtn")
 
 const productsGrid = document.getElementById("productsGrid")
 const resultsCount = document.getElementById("resultsCount")
@@ -486,6 +487,18 @@ async function loadShopData() {
 }
 
 // BUILD FILTER CHECKBOXES
+function isDesktopFiltersLive() {
+  return window.matchMedia("(min-width: 768px)").matches
+}
+
+function handleFilterCheckboxChange() {
+  // On mobile, filters only apply when the "Apply Filters" button is clicked.
+  // On desktop (md and up), the sidebar filters keep applying live, unchanged.
+  if (isDesktopFiltersLive()) {
+    applyFilters()
+  }
+}
+
 function renderCategoryFilters() {
   categoryFiltersBox.innerHTML = ""
   allCategories.forEach(function (category) {
@@ -494,7 +507,7 @@ function renderCategoryFilters() {
     label.innerHTML =
       '<input type="checkbox" class="categoryCheckbox" value="' + category.name + '" /> ' +
       '<span>' + category.name + '</span>'
-    label.querySelector("input").addEventListener("change", applyFilters)
+    label.querySelector("input").addEventListener("change", handleFilterCheckboxChange)
     categoryFiltersBox.appendChild(label)
   })
 }
@@ -514,7 +527,7 @@ function renderBrandFilters() {
     label.innerHTML =
       '<input type="checkbox" class="brandCheckbox" value="' + brand + '" /> ' +
       '<span>' + brand + '</span>'
-    label.querySelector("input").addEventListener("change", applyFilters)
+    label.querySelector("input").addEventListener("change", handleFilterCheckboxChange)
     brandFiltersBox.appendChild(label)
   })
 }
@@ -603,16 +616,16 @@ function renderProducts(products) {
       '  <span>' + renderStars(rating) + '</span>' +
       '  <span class="text-gray-400">(' + reviewCount + ')</span>' +
       '</div>' +
-      '<h3 class="font-semibold text-gray-800 text-sm mb-1">' + product.name + '</h3>' +
-      '<p class="text-xs text-gray-500 mb-2">' + product.category + '</p>' +
-      '<div class="mt-auto flex items-center justify-between">' +
-      '  <div>' +
+      '<h3 class="font-semibold text-gray-800 text-sm mb-1 line-clamp-2 min-h-[2.5rem]">' + product.name + '</h3>' +
+      '<p class="text-xs text-gray-500 mb-2 truncate">' + product.category + '</p>' +
+      '<div class="mt-auto flex items-center justify-between gap-2">' +
+      '  <div class="min-h-[2.5rem] flex flex-col justify-center">' +
       (showDealPrice
-        ? '<span class="font-bold text-gray-800">₹' + product.dealPrice.toLocaleString() + '</span> ' +
-          '<span class="text-xs text-gray-400 line-through">₹' + product.price.toLocaleString() + '</span>'
-        : '<span class="font-bold text-gray-800">₹' + product.price.toLocaleString() + '</span>') +
+        ? '<span class="font-bold text-gray-800 leading-tight">₹' + product.dealPrice.toLocaleString() + '</span>' +
+          '<span class="text-xs text-gray-400 line-through leading-tight">₹' + product.price.toLocaleString() + '</span>'
+        : '<span class="font-bold text-gray-800 leading-tight">₹' + product.price.toLocaleString() + '</span>') +
       '  </div>' +
-      '  <button class="addToCartBtn w-7 h-7 flex items-center justify-center bg-purple-600 text-white text-sm font-bold rounded-full hover:bg-purple-700" aria-label="Add to cart">' +
+      '  <button class="addToCartBtn w-7 h-7 flex items-center justify-center shrink-0 bg-purple-600 text-white text-sm font-bold rounded-full hover:bg-purple-700" aria-label="Add to cart">' +
       '    +' +
       '  </button>' +
       '</div>'
@@ -643,7 +656,12 @@ function renderProducts(products) {
 // EVENTS
 searchInput.addEventListener("input", applyFilters)
 sortSelect.addEventListener("change", applyFilters)
-maxPriceInput.addEventListener("input", applyFilters)
+maxPriceInput.addEventListener("input", function () {
+  updateMaxPriceLabel()
+  if (isDesktopFiltersLive()) {
+    applyFilters()
+  }
+})
 
 clearFiltersBtn.addEventListener("click", function () {
   document.querySelectorAll(".categoryCheckbox, .brandCheckbox").forEach(function (box) {

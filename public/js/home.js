@@ -213,16 +213,16 @@ function renderProducts(gridId, loadingId, errorId, products) {
       '  <span>' + renderStars(rating) + '</span>' +
       '  <span class="text-gray-400">(' + reviewCount + ')</span>' +
       '</div>' +
-      '<h3 class="font-semibold text-gray-800 text-sm mb-1">' + product.name + '</h3>' +
-      '<p class="text-xs text-gray-500 mb-2">' + product.category + '</p>' +
-      '<div class="mt-auto flex items-center justify-between">' +
-      '  <div>' +
+      '<h3 class="font-semibold text-gray-800 text-sm mb-1 line-clamp-2 min-h-[2.5rem]">' + product.name + '</h3>' +
+      '<p class="text-xs text-gray-500 mb-2 truncate">' + product.category + '</p>' +
+      '<div class="mt-auto flex items-center justify-between gap-2">' +
+      '  <div class="min-h-[2.5rem] flex flex-col justify-center">' +
       (showDealPrice
-        ? '<span class="font-bold text-gray-800">₹' + product.dealPrice.toLocaleString("en-IN") + '</span> ' +
-          '<span class="text-xs text-gray-400 line-through">₹' + product.price.toLocaleString("en-IN") + '</span>'
-        : '<span class="font-bold text-gray-800">₹' + product.price.toLocaleString("en-IN") + '</span>') +
+        ? '<span class="font-bold text-gray-800 leading-tight">₹' + product.dealPrice.toLocaleString("en-IN") + '</span>' +
+          '<span class="text-xs text-gray-400 line-through leading-tight">₹' + product.price.toLocaleString("en-IN") + '</span>'
+        : '<span class="font-bold text-gray-800 leading-tight">₹' + product.price.toLocaleString("en-IN") + '</span>') +
       '  </div>' +
-      '  <button class="addToCartBtn w-7 h-7 flex items-center justify-center bg-purple-600 text-white text-sm font-bold rounded-full hover:bg-purple-700" aria-label="Add to cart">+</button>' +
+      '  <button class="addToCartBtn w-7 h-7 flex items-center justify-center shrink-0 bg-purple-600 text-white text-sm font-bold rounded-full hover:bg-purple-700" aria-label="Add to cart">+</button>' +
       '</div>';
 
     if (hasImage) {
@@ -483,6 +483,55 @@ if (logoutBtn) {
     window.location.href = "login.html";
   });
 }
+
+// PROFILE DROPDOWN
+(function () {
+  const profileBtn = document.getElementById("profileBtn");
+  const profileDropdown = document.getElementById("profileDropdown");
+  if (!profileBtn || !profileDropdown) return;
+
+  async function loadProfile() {
+    const stored = JSON.parse(localStorage.getItem("couponx_user") || "null");
+    if (!stored) return;
+
+    document.getElementById("profileName").textContent = stored.name || "—";
+    document.getElementById("profileEmail").textContent = stored.email || "—";
+    document.getElementById("profileMobile").textContent = stored.mobile || "—";
+    document.getElementById("profileAddress").textContent = stored.address || "—";
+
+    try {
+      const res = await fetch("/api/auth/profile?email=" + encodeURIComponent(stored.email));
+      if (!res.ok) return;
+      const user = await res.json();
+      document.getElementById("profileName").textContent = user.name || "—";
+      document.getElementById("profileEmail").textContent = user.email || "—";
+      document.getElementById("profileMobile").textContent = user.mobile || "—";
+      document.getElementById("profileAddress").textContent = user.address || "—";
+      stored.mobile = user.mobile;
+      stored.address = user.address;
+      localStorage.setItem("couponx_user", JSON.stringify(stored));
+    } catch (err) {
+      console.log("Profile fetch error:", err);
+    }
+  }
+
+  profileBtn.addEventListener("click", function (e) {
+    e.stopPropagation();
+    const isHidden = profileDropdown.classList.contains("hidden");
+    if (isHidden) {
+      loadProfile();
+      profileDropdown.classList.remove("hidden");
+    } else {
+      profileDropdown.classList.add("hidden");
+    }
+  });
+
+  document.addEventListener("click", function (e) {
+    if (!profileDropdown.contains(e.target) && e.target !== profileBtn) {
+      profileDropdown.classList.add("hidden");
+    }
+  });
+})();
 // CART SIDEBAR — COUPON & PAY
 let appliedCoupon = null; // { code, discountAmount, discountType, discountValue }
 
