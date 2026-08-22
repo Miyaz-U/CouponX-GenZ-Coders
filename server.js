@@ -91,13 +91,17 @@ const Order = mongoose.model("Order", orderSchema, "Orders")
 // Register
 app.post("/api/auth/register", async function (req, res) {
   try {
-    const { name, email, password, role } = req.body
-    if (!name || !email || !password) {
-      return res.status(400).json({ message: "Name, email and password are required" })
+    const { name, email, password, mobile, address, role } = req.body
+    if (!name || !email || !password || !mobile || !address) {
+      return res.status(400).json({ message: "Name, email, mobile number, address and password are required" })
     }
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (!emailPattern.test(email)) {
       return res.status(400).json({ message: "Please enter a valid email address." })
+    }
+    const mobilePattern = /^[6-9]\d{9}$/
+    if (!mobilePattern.test(mobile)) {
+      return res.status(400).json({ message: "Please enter a valid 10-digit mobile number." })
     }
     if (password.length < 6) {
       return res.status(400).json({ message: "Password must be at least 6 characters long." })
@@ -106,7 +110,7 @@ app.post("/api/auth/register", async function (req, res) {
     if (existing) {
       return res.status(409).json({ message: "An account with that email already exists." })
     }
-    const newUser = new User({ name, email, password, role: role || "customer" })
+    const newUser = new User({ name, email, password, mobile, address, role: role || "customer" })
     await newUser.save()
     res.status(201).json({ message: "Account created successfully" })
   } catch (err) {

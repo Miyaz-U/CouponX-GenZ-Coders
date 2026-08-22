@@ -14,9 +14,15 @@ const loadingMsg = document.getElementById("loadingMsg")
 const errorMsg = document.getElementById("errorMsg")
 const noResultsMsg = document.getElementById("noResultsMsg")
 const cartCountBadge = document.getElementById("cartCount")
+const paginationControls = document.getElementById("paginationControls")
 
 let allCategories = []
 let allProducts = []
+
+// PAGINATION STATE (shop products grid)
+const PRODUCTS_PER_PAGE = 12
+let currentFilteredProducts = []
+let currentPage = 1
 
 // CART
 function getCart() {
@@ -579,7 +585,9 @@ function applyFilters() {
     result.sort(function (a, b) { return (a._id < b._id ? 1 : -1) })
   }
 
-  renderProducts(result)
+  currentFilteredProducts = result
+  currentPage = 1
+  renderProducts(currentFilteredProducts)
 }
 
 function renderProducts(products) {
@@ -588,11 +596,19 @@ function renderProducts(products) {
 
   if (products.length === 0) {
     noResultsMsg.classList.remove("hidden")
+    paginationControls.innerHTML = ""
     return;
   }
   noResultsMsg.classList.add("hidden")
 
-  products.forEach(function (product) {
+  const totalPages = Math.max(1, Math.ceil(products.length / PRODUCTS_PER_PAGE))
+  if (currentPage > totalPages) currentPage = totalPages
+  if (currentPage < 1) currentPage = 1
+
+  const startIndex = (currentPage - 1) * PRODUCTS_PER_PAGE
+  const pageProducts = products.slice(startIndex, startIndex + PRODUCTS_PER_PAGE)
+
+  pageProducts.forEach(function (product) {
     const card = document.createElement("div")
     card.className = "bg-white border border-gray-200 rounded-lg p-4 flex flex-col transition duration-200 hover:shadow-lg hover:border-purple-300 hover:-translate-y-1"
 
@@ -650,6 +666,89 @@ function renderProducts(products) {
     })
 
     productsGrid.appendChild(card)
+  })
+
+  renderPaginationControls(totalPages)
+}
+
+// Builds the page-number sequence with ellipses, e.g. 1 … 4 5 6 … 12
+function buildPageNumberSequence(current, total) {
+  const pages = []
+  const addRange = function (start, end) {
+    for (let i = start; i <= end; i++) pages.push(i)
+  }
+
+  if (total <= 7) {
+    addRange(1, total)
+    return pages
+  }
+
+  pages.push(1)
+  const rangeStart = Math.max(2, current - 1)
+  const rangeEnd = Math.min(total - 1, current + 1)
+
+  if (rangeStart > 2) pages.push("...")
+  addRange(rangeStart, rangeEnd)
+  if (rangeEnd < total - 1) pages.push("...")
+  pages.push(total)
+
+  return pages
+}
+
+function goToPage(page) {
+  currentPage = page
+  renderProducts(currentFilteredProducts)
+  productsGrid.scrollIntoView({ behavior: "smooth", block: "start" })
+}
+
+function renderPaginationControls(totalPages) {
+  if (totalPages <= 1) {
+    paginationControls.innerHTML = ""
+    return
+  }
+
+  const navBtnBase = "min-w-[2.25rem] h-9 px-2 rounded-md text-sm font-medium transition flex items-center justify-center"
+  const inactiveBtn = navBtnBase + " bg-white border border-gray-300 text-gray-600 hover:bg-gray-50"
+  const activeBtn = navBtnBase + " bg-purple-600 text-white border border-purple-600"
+  const disabledBtn = navBtnBase + " bg-gray-50 border border-gray-200 text-gray-300 cursor-not-allowed"
+
+  let html = '<div class="flex flex-wrap items-center justify-center gap-1.5">'
+
+  // Prev button
+  html += '<button type="button" data-page="' + (currentPage - 1) + '" ' +
+    (currentPage === 1 ? 'disabled' : '') +
+    ' class="pageNavBtn ' + (currentPage === 1 ? disabledBtn : inactiveBtn) + '" aria-label="Previous page">‹</button>'
+
+  // Page number buttons — hidden on the smallest screens to keep the bar compact
+  const sequence = buildPageNumberSequence(currentPage, totalPages)
+  html += '<span class="hidden sm:flex items-center gap-1.5 flex-wrap justify-center">'
+  sequence.forEach(function (item) {
+    if (item === "...") {
+      html += '<span class="px-1 text-sm text-gray-400 select-none">…</span>'
+    } else {
+      html += '<button type="button" data-page="' + item + '" class="pageNavBtn ' +
+        (item === currentPage ? activeBtn : inactiveBtn) + '">' + item + '</button>'
+    }
+  })
+  html += '</span>'
+
+  // Compact "X / Y" indicator shown only on the smallest screens
+  html += '<span class="sm:hidden text-sm text-gray-600 px-2 select-none">' + currentPage + ' / ' + totalPages + '</span>'
+
+  // Next button
+  html += '<button type="button" data-page="' + (currentPage + 1) + '" ' +
+    (currentPage === totalPages ? 'disabled' : '') +
+    ' class="pageNavBtn ' + (currentPage === totalPages ? disabledBtn : inactiveBtn) + '" aria-label="Next page">›</button>'
+
+  html += '</div>'
+
+  paginationControls.innerHTML = html
+
+  paginationControls.querySelectorAll(".pageNavBtn").forEach(function (btn) {
+    if (btn.disabled) return
+    btn.addEventListener("click", function () {
+      goToPage(Number(btn.getAttribute("data-page")))
+    })
   })
 }
 

@@ -145,6 +145,8 @@ signupForm.addEventListener("submit", function (event) {
 
   const name = document.getElementById("signupName").value.trim()
   const email = document.getElementById("signupEmail").value.trim()
+  const mobile = document.getElementById("signupMobile").value.trim()
+  const address = document.getElementById("signupAddress").value.trim()
   const password = document.getElementById("signupPassword").value
   const confirmPassword = document.getElementById("signupConfirmPassword").value
 
@@ -164,6 +166,21 @@ signupForm.addEventListener("submit", function (event) {
   }
   if (!isValidEmail(email)) {
     signupErrorMsg.textContent = "Please enter a valid email address."
+    signupErrorMsg.classList.remove("hidden")
+    return
+  }
+  if (!mobile) {
+    signupErrorMsg.textContent = "Please enter your mobile number."
+    signupErrorMsg.classList.remove("hidden")
+    return
+  }
+  if (!/^[6-9]\d{9}$/.test(mobile)) {
+    signupErrorMsg.textContent = "Please enter a valid 10-digit mobile number."
+    signupErrorMsg.classList.remove("hidden")
+    return
+  }
+  if (!address) {
+    signupErrorMsg.textContent = "Please enter your address."
     signupErrorMsg.classList.remove("hidden")
     return
   }
@@ -188,7 +205,7 @@ signupForm.addEventListener("submit", function (event) {
     headers: {
       "Content-Type": "application/json"
     },
-    body: JSON.stringify({ name: name, email: email, password: password, role: "customer" })
+    body: JSON.stringify({ name: name, email: email, mobile: mobile, address: address, password: password, role: "customer" })
   })
     .then(function (response) {
       return response.json().then(function (data) {

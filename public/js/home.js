@@ -184,11 +184,13 @@ function renderProducts(gridId, loadingId, errorId, products) {
   const grid = document.getElementById(gridId);
 
   if (loadingEl) loadingEl.classList.add("hidden");
+  grid.innerHTML = "";
 
   if (!products || products.length === 0) {
     if (errorEl) { errorEl.textContent = "No products available."; errorEl.classList.remove("hidden"); }
     return;
   }
+  if (errorEl) errorEl.classList.add("hidden");
 
   products.forEach(function (product) {
     const card = document.createElement("div");
@@ -246,6 +248,87 @@ function renderProducts(gridId, loadingId, errorId, products) {
   });
 }
 
+// PAGINATION HELPERS (shared across home page product grids)
+// Builds the page-number sequence with ellipses, e.g. 1 … 4 5 6 … 12
+function buildPageNumberSequence(current, total) {
+  const pages = []
+  const addRange = function (start, end) {
+    for (let i = start; i <= end; i++) pages.push(i)
+  }
+
+  if (total <= 7) {
+    addRange(1, total)
+    return pages
+  }
+
+  pages.push(1)
+  const rangeStart = Math.max(2, current - 1)
+  const rangeEnd = Math.min(total - 1, current + 1)
+
+  if (rangeStart > 2) pages.push("...")
+  addRange(rangeStart, rangeEnd)
+  if (rangeEnd < total - 1) pages.push("...")
+  pages.push(total)
+
+  return pages
+}
+
+// Renders Prev/Next + numbered page controls into containerId.
+// onPageChange(page) is called whenever the user picks a different page.
+function renderPaginationControls(containerId, currentPage, totalPages, onPageChange) {
+  const container = document.getElementById(containerId)
+  if (!container) return
+
+  if (totalPages <= 1) {
+    container.innerHTML = ""
+    return
+  }
+
+  const navBtnBase = "min-w-[2.25rem] h-9 px-2 rounded-md text-sm font-medium transition flex items-center justify-center"
+  const inactiveBtn = navBtnBase + " bg-white border border-gray-300 text-gray-600 hover:bg-gray-50"
+  const activeBtn = navBtnBase + " bg-purple-600 text-white border border-purple-600"
+  const disabledBtn = navBtnBase + " bg-gray-50 border border-gray-200 text-gray-300 cursor-not-allowed"
+
+  let html = '<div class="flex flex-wrap items-center justify-center gap-1.5">'
+
+  // Prev button
+  html += '<button type="button" data-page="' + (currentPage - 1) + '" ' +
+    (currentPage === 1 ? 'disabled' : '') +
+    ' class="pageNavBtn ' + (currentPage === 1 ? disabledBtn : inactiveBtn) + '" aria-label="Previous page">‹</button>'
+
+  // Page number buttons — hidden on the smallest screens to keep the bar compact
+  const sequence = buildPageNumberSequence(currentPage, totalPages)
+  html += '<span class="hidden sm:flex items-center gap-1.5 flex-wrap justify-center">'
+  sequence.forEach(function (item) {
+    if (item === "...") {
+      html += '<span class="px-1 text-sm text-gray-400 select-none">…</span>'
+    } else {
+      html += '<button type="button" data-page="' + item + '" class="pageNavBtn ' +
+        (item === currentPage ? activeBtn : inactiveBtn) + '">' + item + '</button>'
+    }
+  })
+  html += '</span>'
+
+  // Compact "X / Y" indicator shown only on the smallest screens
+  html += '<span class="sm:hidden text-sm text-gray-600 px-2 select-none">' + currentPage + ' / ' + totalPages + '</span>'
+
+  // Next button
+  html += '<button type="button" data-page="' + (currentPage + 1) + '" ' +
+    (currentPage === totalPages ? 'disabled' : '') +
+    ' class="pageNavBtn ' + (currentPage === totalPages ? disabledBtn : inactiveBtn) + '" aria-label="Next page">›</button>'
+
+  html += '</div>'
+
+  container.innerHTML = html
+
+  container.querySelectorAll(".pageNavBtn").forEach(function (btn) {
+    if (btn.disabled) return
+    btn.addEventListener("click", function () {
+      onPageChange(Number(btn.getAttribute("data-page")))
+    })
+  })
+}
+
 // CATEGORIES tiles for home page
 async function loadCategories() {
   try {
@@ -297,6 +380,30 @@ async function loadCategories() {
 
 // CATEGORY PRODUCTS (shown inline on the home page)
 const CATEGORY_TRANSITION_MS = 300; // keep in sync with the "duration-300" class
+const CATEGORY_PRODUCTS_PAGE_SIZE = 8;
+let categoryProductsAllProducts = [];
+let categoryProductsCurrentPage = 1;
+
+function renderCategoryProductsPage() {
+  const section = document.getElementById("categoryProducts");
+  const totalPages = Math.max(1, Math.ceil(categoryProductsAllProducts.length / CATEGORY_PRODUCTS_PAGE_SIZE));
+  if (categoryProductsCurrentPage > totalPages) categoryProductsCurrentPage = totalPages;
+  if (categoryProductsCurrentPage < 1) categoryProductsCurrentPage = 1;
+
+  const startIndex = (categoryProductsCurrentPage - 1) * CATEGORY_PRODUCTS_PAGE_SIZE;
+  const pageProducts = categoryProductsAllProducts.slice(startIndex, startIndex + CATEGORY_PRODUCTS_PAGE_SIZE);
+
+  renderProducts("categoryProductsGrid", "categoryProductsLoading", "categoryProductsError", pageProducts);
+  renderPaginationControls("categoryProductsPaginationControls", categoryProductsCurrentPage, totalPages, function (page) {
+    // The section's height may still be mid-transition from the reveal
+    // animation; release any fixed height/overflow so it can resize
+    // naturally to fit the new page of cards without clipping.
+    section.style.height = "";
+    section.style.overflow = "";
+    categoryProductsCurrentPage = page;
+    renderCategoryProductsPage();
+  });
+}
 
 function setActiveCategoryTile(activeTile) {
   document.querySelectorAll(".categoryTile").forEach(function (tile) {
@@ -399,6 +506,8 @@ async function showCategoryProducts(categoryName, tileEl) {
   grid.innerHTML = "";
   errorEl.classList.add("hidden");
   loading.classList.remove("hidden");
+  const categoryPaginationEl = document.getElementById("categoryProductsPaginationControls");
+  if (categoryPaginationEl) categoryPaginationEl.innerHTML = "";
 
   try {
     const response = await fetch(API_URL + "/products?category=" + encodeURIComponent(categoryName));
@@ -406,13 +515,17 @@ async function showCategoryProducts(categoryName, tileEl) {
     const products = await response.json();
     if (thisRequest !== categoryRequestToken) return;
     subtitle.textContent = products.length + " product" + (products.length !== 1 ? "s" : "") + " found";
-    renderProducts("categoryProductsGrid", "categoryProductsLoading", "categoryProductsError", products);
+    categoryProductsAllProducts = products;
+    categoryProductsCurrentPage = 1;
+    renderCategoryProductsPage();
   } catch (err) {
     console.log("Error loading category products:", err);
     if (thisRequest !== categoryRequestToken) return;
     loading.classList.add("hidden");
     errorEl.textContent = "Could not load products for this category. Is the server running?";
     errorEl.classList.remove("hidden");
+    const paginationEl = document.getElementById("categoryProductsPaginationControls");
+    if (paginationEl) paginationEl.innerHTML = "";
   }
 
   // Content is fully ready now — reveal it with a single, clean fade/slide.
@@ -433,34 +546,81 @@ function setupCategoryProductsClear() {
 }
 
 // FEATURED PRODUCTS
+const FEATURED_PAGE_SIZE = 4
+let featuredAllProducts = []
+let featuredCurrentPage = 1
+
+function renderFeaturedPage() {
+  const totalPages = Math.max(1, Math.ceil(featuredAllProducts.length / FEATURED_PAGE_SIZE))
+  if (featuredCurrentPage > totalPages) featuredCurrentPage = totalPages
+  if (featuredCurrentPage < 1) featuredCurrentPage = 1
+
+  const startIndex = (featuredCurrentPage - 1) * FEATURED_PAGE_SIZE
+  const pageProducts = featuredAllProducts.slice(startIndex, startIndex + FEATURED_PAGE_SIZE)
+
+  renderProducts("featuredGrid", "featuredLoading", "featuredError", pageProducts)
+  renderPaginationControls("featuredPaginationControls", featuredCurrentPage, totalPages, function (page) {
+    featuredCurrentPage = page
+    renderFeaturedPage()
+    document.getElementById("featured").scrollIntoView({ behavior: "smooth", block: "start" })
+  })
+}
+
 async function loadFeaturedProducts() {
   try {
     const response = await fetch(API_URL + "/products/featured");
     if (!response.ok) throw new Error("Failed");
     const products = await response.json();
-    renderProducts("featuredGrid", "featuredLoading", "featuredError", products);
+    featuredAllProducts = products;
+    featuredCurrentPage = 1;
+    renderFeaturedPage();
   } catch (err) {
     console.log("Error loading featured:", err);
     const el = document.getElementById("featuredError");
     const loading = document.getElementById("featuredLoading");
     if (loading) loading.classList.add("hidden");
     if (el) { el.textContent = "Could not load featured products. Is the server running?"; el.classList.remove("hidden"); }
+    const paginationEl = document.getElementById("featuredPaginationControls");
+    if (paginationEl) paginationEl.innerHTML = "";
   }
 }
 
 // DEALS
+const DEALS_PAGE_SIZE = 8
+let dealsAllProducts = []
+let dealsCurrentPage = 1
+
+function renderDealsPage() {
+  const totalPages = Math.max(1, Math.ceil(dealsAllProducts.length / DEALS_PAGE_SIZE))
+  if (dealsCurrentPage > totalPages) dealsCurrentPage = totalPages
+  if (dealsCurrentPage < 1) dealsCurrentPage = 1
+
+  const startIndex = (dealsCurrentPage - 1) * DEALS_PAGE_SIZE
+  const pageProducts = dealsAllProducts.slice(startIndex, startIndex + DEALS_PAGE_SIZE)
+
+  renderProducts("dealsGrid", "dealsLoading", "dealsError", pageProducts)
+  renderPaginationControls("dealsPaginationControls", dealsCurrentPage, totalPages, function (page) {
+    dealsCurrentPage = page
+    renderDealsPage()
+  })
+}
+
 async function loadDeals() {
   try {
     const response = await fetch(API_URL + "/products/deals");
     if (!response.ok) throw new Error("Failed");
     const products = await response.json();
-    renderProducts("dealsGrid", "dealsLoading", "dealsError", products);
+    dealsAllProducts = products;
+    dealsCurrentPage = 1;
+    renderDealsPage();
   } catch (err) {
     console.log("Error loading deals:", err);
     const el = document.getElementById("dealsError");
     const loading = document.getElementById("dealsLoading");
     if (loading) loading.classList.add("hidden");
     if (el) { el.textContent = "Could not load deals. Is the server running?"; el.classList.remove("hidden"); }
+    const paginationEl = document.getElementById("dealsPaginationControls");
+    if (paginationEl) paginationEl.innerHTML = "";
   }
 }
 
