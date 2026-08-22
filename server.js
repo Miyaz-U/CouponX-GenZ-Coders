@@ -31,6 +31,8 @@ const userSchema = new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
+  mobile: { type: String, default: "" },
+  address: { type: String, default: "" },
   role: { type: String, enum: ["admin", "customer"], default: "customer" },
   createdDate: { type: Date, default: Date.now }
 })
@@ -128,7 +130,7 @@ app.post("/api/auth/login", async function (req, res) {
     }
     res.status(200).json({
       message: "Login successful",
-      user: { name: user.name, email: user.email, role: user.role }
+      user: { name: user.name, email: user.email, mobile: user.mobile, address: user.address, role: user.role }
     })
   } catch (err) {
     res.status(500).json({ message: "Something went wrong", error: err.message })
@@ -434,6 +436,30 @@ app.post("/api/orders/applycoupon", async function (req, res) {
     res.status(500).json({ message: "Something went wrong", error: err.message })
   }
 })
+
+// Get user profile by email
+app.get("/api/auth/profile", async function (req, res) {
+  try {
+    const { email } = req.query
+    if (!email) {
+      return res.status(400).json({ message: "Email is required" })
+    }
+    const user = await User.findOne({ email: email })
+    if (!user) {
+      return res.status(404).json({ message: "User not found" })
+    }
+    res.status(200).json({
+      name: user.name,
+      email: user.email,
+      mobile: user.mobile,
+      address: user.address,
+      role: user.role
+    })
+  } catch (err) {
+    res.status(500).json({ message: "Something went wrong", error: err.message })
+  }
+})
+
 
 // HOME PAGE REDIRECT
 app.get("/", (req, res) => {

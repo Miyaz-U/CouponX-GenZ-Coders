@@ -17,10 +17,24 @@
                 <a href="deals.html" class="hover:text-purple-600">Deals</a>
             </nav>
             <div class="flex items-center gap-4">
-                <a href="cart.html" class="relative text-gray-700">
+                <button id="cartIconBtn" class="relative text-gray-700">
                     🛒
                     <span id="cartCount" class="absolute -top-2 -right-3 bg-purple-600 text-white text-xs rounded-full px-1.5">0</span>
-                </a>
+                </button>
+                <div class="relative">
+                    <button id="profileBtn" class="text-sm font-medium bg-gray-100 text-gray-700 px-3 py-1 rounded-lg hover:bg-gray-200 transition">
+                        👤 Profile
+                    </button>
+                    <div id="profileDropdown" class="hidden absolute right-0 mt-2 w-72 bg-white border border-gray-200 rounded-xl shadow-lg z-50 p-4">
+                        <p class="text-xs font-semibold text-gray-400 uppercase mb-3">My Account</p>
+                        <div class="space-y-2 text-sm text-gray-700">
+                            <div><span class="font-medium text-gray-500">Name:</span> <span id="profileName">—</span></div>
+                            <div><span class="font-medium text-gray-500">Email:</span> <span id="profileEmail">—</span></div>
+                            <div><span class="font-medium text-gray-500">Mobile:</span> <span id="profileMobile">—</span></div>
+                            <div><span class="font-medium text-gray-500">Address:</span> <span id="profileAddress">—</span></div>
+                        </div>
+                    </div>
+                </div>
                 <button id="logoutBtn" class="text-sm font-medium bg-purple-600 text-white px-3 py-1 rounded-lg hover:bg-purple-700 transition">
                     Logout
                 </button>
@@ -91,6 +105,90 @@
             </div>
         </div>
     </main>
+
+    <aside id="cartDrawer"
+        class="fixed inset-y-0 right-0 z-50 w-full max-w-sm translate-x-full border-l border-gray-200 bg-white shadow-2xl transition-transform duration-300">
+        <div class="flex h-full flex-col">
+            <div class="flex items-center justify-between border-b px-5 py-4">
+                <div>
+                    <h3 class="text-sm font-bold text-gray-800">Your Cart</h3>
+                    <p id="cartSummary" class="mt-0.5 text-xs text-gray-400">0 items</p>
+                </div>
+                <button id="closeCart"
+                    class="grid h-8 w-8 place-items-center rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-600 text-lg font-bold">
+                    ✕
+                </button>
+            </div>
+            <div id="cartItems" class="flex-1 overflow-y-auto p-5"></div>
+            <div class="border-t p-5 space-y-3">
+                <!-- Coupon row -->
+                <div id="couponSelectRow"
+                    class="flex items-center justify-between gap-2 rounded-lg border border-dashed border-purple-300 bg-purple-50 px-3 py-2">
+                    <span class="flex items-center gap-1.5 text-xs font-medium text-purple-700">
+                        🏷️ Have a coupon?
+                    </span>
+                    <button id="selectCouponBtn" disabled
+                        class="rounded-lg bg-purple-600 px-3 py-1.5 text-xs font-semibold text-white opacity-50 cursor-not-allowed hover:bg-purple-700 transition">
+                        Select Coupon
+                    </button>
+                </div>
+                <div id="appliedCouponRow"
+                    class="hidden items-center justify-between gap-2 rounded-lg border border-green-300 bg-green-50 px-3 py-2">
+                    <div class="text-xs leading-snug">
+                        <p class="font-semibold text-green-700">🏷️ <span id="appliedCouponCode"></span> applied</p>
+                        <p id="appliedCouponSavings" class="text-green-600"></p>
+                    </div>
+                    <div class="flex shrink-0 items-center gap-2">
+                        <button id="changeCouponBtn" class="text-xs font-medium text-purple-600 hover:underline">Change</button>
+                        <button id="removeCouponBtn" class="text-xs font-medium text-red-500 hover:underline">Remove</button>
+                    </div>
+                </div>
+                <p id="couponMsg" class="text-xs hidden"></p>
+                <!-- Totals -->
+                <div class="flex items-center justify-between text-sm">
+                    <span class="text-gray-500">Subtotal</span>
+                    <span id="cartTotal">₹0</span>
+                </div>
+                <div id="discountRow" class="hidden flex items-center justify-between text-sm">
+                    <span class="text-green-600">Discount (<span id="couponLabel"></span>)</span>
+                    <span id="discountAmt" class="text-green-600">-₹0</span>
+                </div>
+                <div class="flex items-center justify-between text-sm font-bold border-t pt-2">
+                    <span>Total</span>
+                    <span id="cartFinalTotal">₹0</span>
+                </div>
+                <!-- Pay button -->
+                <button id="payBtn"
+                    class="block w-full rounded-lg bg-purple-600 py-2.5 text-center text-sm font-semibold text-white hover:bg-purple-700 transition">
+                    Pay
+                </button>
+                <!-- Success message (hidden until payment) -->
+                <div id="paySuccess" class="hidden rounded-lg bg-green-50 border border-green-200 p-3 text-center text-sm font-medium text-green-700"></div>
+            </div>
+        </div>
+    </aside>
+    <div id="cartBackdrop" class="fixed inset-0 z-40 hidden bg-gray-900/30"></div>
+
+    <!-- Coupon selection modal -->
+    <div id="couponModalBackdrop"
+        class="fixed inset-0 z-[70] hidden items-center justify-center bg-gray-900/40 px-4">
+        <div class="flex max-h-[80vh] w-full max-w-sm flex-col rounded-2xl bg-white shadow-2xl">
+            <div class="flex items-center justify-between border-b px-5 py-4">
+                <h3 class="text-sm font-bold text-gray-800">Available Coupons</h3>
+                <button id="closeCouponModal"
+                    class="grid h-8 w-8 place-items-center rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-600 text-lg font-bold">
+                    ✕
+                </button>
+            </div>
+            <div id="couponListContainer" class="flex-1 space-y-3 overflow-y-auto p-4">
+                <p class="text-sm text-gray-400">Loading coupons...</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast"
+        class="pointer-events-none fixed bottom-4 left-1/2 z-[60] -translate-x-1/2 rounded-lg bg-gray-900 px-4 py-2 text-xs font-medium text-white opacity-0 shadow-lg transition-all">
+    </div>
     <script src="js/shop.js"></script>
 </body>
 </html>
