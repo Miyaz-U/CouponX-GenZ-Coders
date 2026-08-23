@@ -18,15 +18,7 @@ const ADMIN_DETAILS = {
   password: "[PASSWORD]"
 }
 
-// Same User schema as in server.js
-const userSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  email: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
-  role: { type: String, enum: ["admin", "customer"], default: "customer" },
-  createdDate: { type: Date, default: Date.now }
-})
-const User = mongoose.model("User", userSchema, "Users")
+const User = require("../models/User")
 
 mongoose.connect(process.env.MONGODB_URI).then(async function () {
   console.log("Connected to MongoDB...")

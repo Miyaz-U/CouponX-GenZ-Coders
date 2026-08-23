@@ -3,27 +3,12 @@ const mongoose = require("mongoose")
 const dotenv = require("dotenv")
 dotenv.config({ path: path.join(__dirname, "../.env") })
 
+const Category = require("../models/Category")
+const Product = require("../models/Product")
+const Coupon = require("../models/Coupon")
+
 mongoose.connect(process.env.MONGODB_URI).then(async function () {
   console.log("Connected. Seeding...")
-
-  // Same Category schema as in server.js
-  const Category = mongoose.model("Category", new mongoose.Schema({
-    name: String, description: String, image: String
-  }), "Categories")
-
-  // Same Product schema as in server.js
-  const Product = mongoose.model("Product", new mongoose.Schema({
-    name: String, description: String, price: Number,
-    category: String, brand: String, stock: Number,
-    image: String, isDeal: Boolean, dealPrice: Number, dealDiscountPercent: Number
-  }), "Products")
-
-  // Same Coupon schema as in server.js
-  const Coupon = mongoose.model("Coupon", new mongoose.Schema({
-    code: String, discountType: String, discountValue: Number,
-    minPurchaseAmount: Number, maxDiscountAmount: Number, expiryDate: Date,
-    usageLimit: Number, usedCount: Number, status: String
-  }), "Coupons")
 
   await Category.deleteMany({})
   await Product.deleteMany({})

@@ -9,17 +9,52 @@ function isValidEmail(value) {
   return emailPattern.test(value)
 }
 
-// Show/Hide password
-togglePasswordBtn.addEventListener("click", function () {
-  if (passwordInput.type === "password") {
-    passwordInput.type = "text"
-    togglePasswordBtn.textContent = "Hide"
-  } else {
-    passwordInput.type = "password"
-    togglePasswordBtn.textContent = "Show"
-  }
-});
+// Wires up a single show/hide password toggle button for one input field.
+function setupPasswordToggle(inputEl, btnEl) {
+  btnEl.addEventListener("click", function () {
+    if (inputEl.type === "password") {
+      inputEl.type = "text"
+      btnEl.textContent = "Hide"
+    } else {
+      inputEl.type = "password"
+      btnEl.textContent = "Show"
+    }
+  })
+}
 
+// Sends a JSON POST request and resolves to { status, body }.
+function postJSON(url, body) {
+  return fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body)
+  }).then(function (response) {
+    return response.json().then(function (data) {
+      return { status: response.status, body: data }
+    })
+  })
+}
+
+// PASSWORD TOGGLES — one call per input/button pair
+setupPasswordToggle(passwordInput, togglePasswordBtn)
+
+const signupPasswordInput = document.getElementById("signupPassword")
+const toggleSignupPasswordBtn = document.getElementById("toggleSignupPasswordBtn")
+const signupConfirmPasswordInput = document.getElementById("signupConfirmPassword")
+const toggleSignupConfirmPasswordBtn = document.getElementById("toggleSignupConfirmPasswordBtn")
+
+setupPasswordToggle(signupPasswordInput, toggleSignupPasswordBtn)
+setupPasswordToggle(signupConfirmPasswordInput, toggleSignupConfirmPasswordBtn)
+
+const forgotNewPasswordInput = document.getElementById("forgotNewPassword")
+const toggleForgotNewPasswordBtn = document.getElementById("toggleForgotNewPasswordBtn")
+const forgotConfirmPasswordInput = document.getElementById("forgotConfirmPassword")
+const toggleForgotConfirmPasswordBtn = document.getElementById("toggleForgotConfirmPasswordBtn")
+
+setupPasswordToggle(forgotNewPasswordInput, toggleForgotNewPasswordBtn)
+setupPasswordToggle(forgotConfirmPasswordInput, toggleForgotConfirmPasswordBtn)
+
+// LOGIN
 loginForm.addEventListener("submit", function (event) {
   event.preventDefault()
   const email = document.getElementById("email").value.trim()
@@ -50,18 +85,7 @@ loginForm.addEventListener("submit", function (event) {
     return
   }
 
-  fetch("/api/auth/login", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({ email: email, password: password })
-  })
-    .then(function (response) {
-      return response.json().then(function (data) {
-        return { status: response.status, body: data }
-      });
-    })
+  postJSON("/api/auth/login", { email: email, password: password })
     .then(function (result) {
       if (result.status === 200) {
         localStorage.setItem("couponx_user", JSON.stringify(result.body.user))
@@ -89,32 +113,6 @@ loginForm.addEventListener("submit", function (event) {
       errorMsg.classList.remove("hidden")
       console.log("Login error:", error)
     })
-});
-
-// Show/Hide password
-const signupPasswordInput = document.getElementById("signupPassword")
-const toggleSignupPasswordBtn = document.getElementById("toggleSignupPasswordBtn")
-const signupConfirmPasswordInput = document.getElementById("signupConfirmPassword")
-const toggleSignupConfirmPasswordBtn = document.getElementById("toggleSignupConfirmPasswordBtn")
-
-toggleSignupPasswordBtn.addEventListener("click", function () {
-  if (signupPasswordInput.type === "password") {
-    signupPasswordInput.type = "text"
-    toggleSignupPasswordBtn.textContent = "Hide"
-  } else {
-    signupPasswordInput.type = "password"
-    toggleSignupPasswordBtn.textContent = "Show"
-  }
-});
-
-toggleSignupConfirmPasswordBtn.addEventListener("click", function () {
-  if (signupConfirmPasswordInput.type === "password") {
-    signupConfirmPasswordInput.type = "text"
-    toggleSignupConfirmPasswordBtn.textContent = "Hide"
-  } else {
-    signupConfirmPasswordInput.type = "password"
-    toggleSignupConfirmPasswordBtn.textContent = "Show"
-  }
 });
 
 // LOGIN/SIGNUP VIEW TOGGLE
@@ -199,18 +197,7 @@ signupForm.addEventListener("submit", function (event) {
     return
   }
 
-  fetch("/api/auth/register", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({ name: name, email: email, mobile: mobile, address: address, password: password, role: "customer" })
-  })
-    .then(function (response) {
-      return response.json().then(function (data) {
-        return { status: response.status, body: data }
-      })
-    })
+  postJSON("/api/auth/register", { name: name, email: email, mobile: mobile, address: address, password: password, role: "customer" })
     .then(function (result) {
       if (result.status === 201) {
         signupSuccessMsg.textContent = "Account created! You can log in now."
@@ -245,11 +232,6 @@ const backToLoginFromForgotBtn = document.getElementById("backToLoginFromForgotB
 const forgotErrorMsg = document.getElementById("forgotErrorMsg")
 const forgotSuccessMsg = document.getElementById("forgotSuccessMsg")
 
-const forgotNewPasswordInput = document.getElementById("forgotNewPassword")
-const toggleForgotNewPasswordBtn = document.getElementById("toggleForgotNewPasswordBtn")
-const forgotConfirmPasswordInput = document.getElementById("forgotConfirmPassword")
-const toggleForgotConfirmPasswordBtn = document.getElementById("toggleForgotConfirmPasswordBtn")
-
 showForgotBtn.addEventListener("click", function (event) {
   event.preventDefault()
   loginForm.classList.add("hidden")
@@ -262,27 +244,6 @@ backToLoginFromForgotBtn.addEventListener("click", function () {
   forgotForm.classList.add("hidden")
   loginForm.classList.remove("hidden")
   errorMsg.classList.add("hidden")
-});
-
-// Show/Hide password
-toggleForgotNewPasswordBtn.addEventListener("click", function () {
-  if (forgotNewPasswordInput.type === "password") {
-    forgotNewPasswordInput.type = "text"
-    toggleForgotNewPasswordBtn.textContent = "Hide"
-  } else {
-    forgotNewPasswordInput.type = "password"
-    toggleForgotNewPasswordBtn.textContent = "Show"
-  }
-});
-
-toggleForgotConfirmPasswordBtn.addEventListener("click", function () {
-  if (forgotConfirmPasswordInput.type === "password") {
-    forgotConfirmPasswordInput.type = "text"
-    toggleForgotConfirmPasswordBtn.textContent = "Hide"
-  } else {
-    forgotConfirmPasswordInput.type = "password"
-    toggleForgotConfirmPasswordBtn.textContent = "Show"
-  }
 });
 
 forgotForm.addEventListener("submit", function (event) {
@@ -322,18 +283,7 @@ forgotForm.addEventListener("submit", function (event) {
     return
   }
 
-  fetch("/api/auth/reset-password", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({ email: email, newPassword: newPassword })
-  })
-    .then(function (response) {
-      return response.json().then(function (data) {
-        return { status: response.status, body: data }
-      })
-    })
+  postJSON("/api/auth/reset-password", { email: email, newPassword: newPassword })
     .then(function (result) {
       if (result.status === 200) {
         forgotSuccessMsg.textContent = "Password updated! You can log in now."
