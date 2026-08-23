@@ -1,4 +1,4 @@
-const Coupon = require("../models/Coupon")
+const Coupon = require("../models/coupon")
 
 // Applies coupon eligibility rules and calculates the resulting discount for an order
 async function checkCoupon(code, orderAmount) {

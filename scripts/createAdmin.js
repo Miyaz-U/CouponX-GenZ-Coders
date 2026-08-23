@@ -20,7 +20,7 @@ const ADMIN_DETAILS = {
   address: "[ADDRESS]"
 }
 
-const User = require("../models/User")
+const User = require("../models/user")
 
 mongoose.connect(process.env.MONGODB_URI).then(async function () {
   console.log("Connected to MongoDB...")

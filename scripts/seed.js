@@ -3,9 +3,9 @@ const mongoose = require("mongoose")
 const dotenv = require("dotenv")
 dotenv.config({ path: path.join(__dirname, "../.env") })
 
-const Category = require("../models/Category")
-const Product = require("../models/Product")
-const Coupon = require("../models/Coupon")
+const Category = require("../models/category")
+const Product = require("../models/product")
+const Coupon = require("../models/coupon")
 
 mongoose.connect(process.env.MONGODB_URI).then(async function () {
   console.log("Connected. Seeding...")
