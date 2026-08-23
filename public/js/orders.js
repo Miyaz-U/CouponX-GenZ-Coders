@@ -38,4 +38,21 @@ async function loadOrders() {
         `
     }
 }
+
+// Sidebar toggle (matches coupons.html IDs)
+document.getElementById("openSidebar").addEventListener("click", () => {
+    document.getElementById("sidebar").classList.remove("-translate-x-full")
+    document.getElementById("sidebarOverlay").classList.remove("hidden")
+})
+
+document.getElementById("closeSidebar").addEventListener("click", () => {
+    document.getElementById("sidebar").classList.add("-translate-x-full")
+    document.getElementById("sidebarOverlay").classList.add("hidden")
+})
+
+document.getElementById("sidebarOverlay").addEventListener("click", () => {
+    document.getElementById("sidebar").classList.add("-translate-x-full")
+    document.getElementById("sidebarOverlay").classList.add("hidden")
+})
+
 loadOrders()
