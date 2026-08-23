@@ -1,5 +1,6 @@
 const Product = require("../models/Product")
 
+// Get all products
 async function getProducts (req, res) {
     try {
     const { category, minPrice, maxPrice, sort, search, brand } = req.query
@@ -25,6 +26,7 @@ async function getProducts (req, res) {
   }
 }
 
+// Get featured products
 async function getFeaturedProducts (req, res) {
     try {
     const products = await Product.find().sort({ _id: -1 }).limit(8)
@@ -34,6 +36,7 @@ async function getFeaturedProducts (req, res) {
   }
 }
 
+// Get deals
 async function getDeals (req, res) {
     try {
     const deals = await Product.find({ isDeal: true })
@@ -43,6 +46,7 @@ async function getDeals (req, res) {
   }
 }
 
+// Get product by ID
 async function getProductById (req, res) {
     try {
     const product = await Product.findById(req.params.id)
@@ -53,6 +57,7 @@ async function getProductById (req, res) {
   }
 }
 
+// Create a new product
 async function createProduct (req, res) {
     try {
     const newProduct = new Product(req.body)
@@ -63,6 +68,7 @@ async function createProduct (req, res) {
   }
 }
 
+// Update a product
 async function updateProduct (req, res) {
     try {
     const updated = await Product.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true })
@@ -73,6 +79,7 @@ async function updateProduct (req, res) {
   }
 }
 
+// Delete a product
 async function deleteProduct (req, res) {
     try {
     const deleted = await Product.findByIdAndDelete(req.params.id)

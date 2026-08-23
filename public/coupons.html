@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CouponX - Coupons</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+<body class="bg-[#0b0b14] text-white min-h-screen">
+
+    <!-- OVERLAY -->
+    <div id="sidebarOverlay" class="hidden fixed inset-0 bg-black/60 z-40 lg:hidden"></div>
+
+    <!-- SIDEBAR -->
+    <aside id="sidebar" class="fixed top-0 left-0 z-50 w-64 h-screen bg-[#12121d] border-r border-white/10 -translate-x-full lg:translate-x-0 transition-transform">
+        <div class="p-6">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h1 class="text-2xl font-bold">Coupon<span class="text-purple-400">X</span></h1>
+                    <p class="text-xs text-gray-500">Admin Portal</p>
+                </div>
+                <button id="closeSidebar" class="lg:hidden">✕</button>
+            </div>
+        </div>
+        <nav class="px-4 space-y-2">
+            <a href="/dashboard.html" class="block px-4 py-3 rounded-xl text-gray-400 hover:bg-white/5">▦ Dashboard</a>
+            <a href="/coupons.html" class="block px-4 py-3 rounded-xl bg-purple-600/10 text-purple-400">🎟 Coupons</a>
+            <a href="/orders.html" class="block px-4 py-3 rounded-xl text-gray-400 hover:bg-white/5">🛒 Orders</a>
+            <a href="/customers.html" class="block px-4 py-3 rounded-xl text-gray-400 hover:bg-white/5">👥 Customers</a>
+        </nav>
+        <div class="absolute bottom-5 left-4 right-4">
+            <button id="logoutBtn" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:bg-gray-800">
+                <i class="fa-solid fa-right-from-bracket"></i>
+                Logout
+            </button>
+        </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="lg:ml-64">
+        <header class="h-20 border-b border-white/10 flex items-center px-5 sm:px-8 gap-4">
+            <button id="openSidebar" class="lg:hidden w-10 h-10 bg-[#12121d] rounded-lg">☰</button>
+            <div>
+                <h2 class="text-2xl font-bold">Coupons</h2>
+                <p class="text-gray-500 text-sm">Manage all your coupons</p>
+            </div>
+            <div class="ml-auto relative">
+                <button id="profileBtn" class="w-10 h-10 rounded-full bg-purple-600 flex items-center justify-center hover:bg-purple-700 transition">
+                    <i class="fa-solid fa-user"></i>
+                </button>
+            </div>
+        </header>
+        <section class="p-5 sm:p-8">
+
+            <!-- TOP -->
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+                <div>
+                    <h3 class="text-lg font-semibold">All Coupons</h3>
+                </div>
+                <a href="/create-coupon.html" class="bg-purple-600 hover:bg-purple-700 px-5 py-3 rounded-xl text-center font-medium">+ Create Coupon</a>
+            </div>
+
+            <!-- SEARCH -->
+            <div class="bg-[#12121d] border border-white/10 rounded-xl p-4 mb-6">
+                <input id="searchCoupon" type="text" placeholder="Search coupon code..." class="w-full bg-transparent outline-none text-white placeholder-gray-600">
+            </div>
+
+            <!-- TABLE -->
+            <div class="bg-[#12121d] border border-white/10 rounded-2xl overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full min-w-[850px]">
+                        <thead class="border-b border-white/10">
+                            <tr>
+                                <th class="px-6 py-4 text-left text-gray-500 text-sm">Code</th>
+                                <th class="px-6 py-4 text-left text-gray-500 text-sm">Discount</th>
+                                <th class="px-6 py-4 text-left text-gray-500 text-sm">Min Purchase</th>
+                                <th class="px-6 py-4 text-left text-gray-500 text-sm">Valid Till</th>
+                                <th class="px-6 py-4 text-left text-gray-500 text-sm">Usage</th>
+                                <th class="px-6 py-4 text-left text-gray-500 text-sm">Status</th>
+                                <th class="px-6 py-4 text-left text-gray-500 text-sm">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="couponTable">
+                            <tr>
+                                <td colspan="7" class="text-center py-12 text-gray-500">Loading...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+    <script src="/js/adminAuth.js"></script>
+    <script src="/js/adminProfile.js"></script>
+    <script src="/js/coupons.js"></script>
+</body>
+</html>

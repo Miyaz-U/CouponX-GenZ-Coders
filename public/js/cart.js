@@ -203,11 +203,7 @@ function resetCouponState() {
 
 function describeCouponDiscount(coupon) {
   if (coupon.discountType === "percentage") {
-    let text = coupon.discountValue + "% off";
-    if (coupon.maxDiscountAmount !== null && coupon.maxDiscountAmount !== undefined) {
-      text += " (up to ₹" + coupon.maxDiscountAmount.toLocaleString("en-IN") + ")";
-    }
-    return text;
+    return coupon.discountValue + "% off";
   }
   return "₹" + coupon.discountValue.toLocaleString("en-IN") + " off";
 }
@@ -241,9 +237,12 @@ async function loadCouponList() {
     const coupons = await res.json();
     const now = new Date();
 
-    const usable = coupons.filter(function (c) {
-      const withinUsageLimit = c.usageLimit === null || c.usageLimit === undefined || c.usedCount < c.usageLimit;
-      return c.status === "active" && new Date(c.expiryDate) >= now && withinUsageLimit;
+    // API now returns { success, data } with formatted field names
+    const couponList = coupons.success ? coupons.data : coupons;
+
+    const usable = couponList.filter(function (c) {
+      const withinUsageLimit = c.usageLimit === null || c.usageLimit === undefined || c.usageCount < c.usageLimit;
+      return c.isActive && new Date(c.validTill) >= now && withinUsageLimit;
     });
 
     if (!usable.length) {
@@ -252,7 +251,7 @@ async function loadCouponList() {
     }
 
     container.innerHTML = usable.map(function (coupon) {
-      const eligible = subtotal >= coupon.minPurchaseAmount;
+      const eligible = subtotal >= (coupon.minPurchase || 0);
       const isApplied = appliedCoupon && appliedCoupon.code === coupon.code;
       return (
         '<div class="rounded-xl border ' + (isApplied ? "border-purple-400 bg-purple-50" : "border-gray-200") + ' p-3">' +
@@ -272,11 +271,11 @@ async function loadCouponList() {
         '    </button>' +
         '  </div>' +
         '  <div class="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-gray-500">' +
-        '    <span>Min. purchase ₹' + coupon.minPurchaseAmount.toLocaleString("en-IN") + '</span>' +
-        '    <span>Expires ' + formatExpiry(coupon.expiryDate) + '</span>' +
+        '    <span>Min. purchase ₹' + (coupon.minPurchase || 0).toLocaleString("en-IN") + '</span>' +
+        '    <span>Expires ' + formatExpiry(coupon.validTill) + '</span>' +
         '  </div>' +
         (!eligible
-          ? '<p class="mt-1.5 text-[11px] text-red-500">Add ₹' + (coupon.minPurchaseAmount - subtotal).toLocaleString("en-IN") + ' more to use this coupon</p>'
+          ? '<p class="mt-1.5 text-[11px] text-red-500">Add ₹' + ((coupon.minPurchase || 0) - subtotal).toLocaleString("en-IN") + ' more to use this coupon</p>'
           : '') +
         '</div>'
       );
@@ -336,7 +335,7 @@ function setupCartSidebarActions() {
   });
 
   // Pay
-  document.getElementById("payBtn").addEventListener("click", function () {
+  document.getElementById("payBtn").addEventListener("click", async function () {
     const cart = getCart();
     if (!cart.length) {
       showToast("Your cart is empty.");
@@ -346,6 +345,32 @@ function setupCartSidebarActions() {
     const subtotal = cart.reduce(function (sum, item) { return sum + item.price * item.quantity; }, 0);
     const discount = appliedCoupon ? appliedCoupon.discountAmount : 0;
     const finalAmount = Math.max(0, subtotal - discount);
+
+    // Get logged-in customer details from localStorage
+    const storedUser = JSON.parse(localStorage.getItem("couponx_user") || "null");
+    const customer = storedUser
+      ? { name: storedUser.name || "Guest", email: storedUser.email || "" }
+      : { name: "Guest", email: "" };
+
+    // Save order to backend
+    try {
+      await fetch("/api/orders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          customer,
+          items: cart.map(function (item) {
+            return { name: item.name, qty: item.quantity, price: item.price };
+          }),
+          totalAmount: subtotal,
+          couponCode: appliedCoupon ? appliedCoupon.code : null,
+          discountApplied: discount,
+          finalAmount
+        })
+      });
+    } catch (err) {
+      console.error("Order save failed:", err);
+    }
 
     // Clear cart
     saveCart([]);

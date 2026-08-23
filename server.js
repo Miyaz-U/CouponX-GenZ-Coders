@@ -12,6 +12,7 @@ const categoryRoutes = require("./routes/categoryRoutes")
 const productRoutes = require("./routes/productRoutes")
 const couponRoutes = require("./routes/couponRoutes")
 const orderRoutes = require("./routes/orderRoutes")
+const customerRoutes = require("./routes/customerRoutes")
 
 const app = express()
 const PORT = process.env.PORT || 3000
@@ -29,13 +30,14 @@ app.use("/api/categories", categoryRoutes)
 app.use("/api/products", productRoutes)
 app.use("/api/coupons", couponRoutes)
 app.use("/api/orders", orderRoutes)
+app.use("/api/customers", customerRoutes)
 
 // HOME PAGE REDIRECT
 app.get("/", (req, res) => {
-    res.redirect("/login.html");
+    res.redirect("/login.html")
 })
 
 // START SERVER
 app.listen(PORT, function () {
-  console.log("CouponX server running at http://localhost:" + PORT)
+    console.log(`CouponX server running at http://localhost:${PORT}`)
 })

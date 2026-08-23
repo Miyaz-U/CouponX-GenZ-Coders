@@ -1,6 +1,7 @@
 const Category = require("../models/Category")
 const Product = require("../models/Product")
 
+// Get all categories
 async function getCategories (req, res) {
     try {
     const categories = await Category.find()
@@ -10,6 +11,7 @@ async function getCategories (req, res) {
   }
 }
 
+// Get all products by category
 async function getProductsByCategory (req, res) {
     try {
     const category = await Category.findById(req.params.id)
@@ -23,6 +25,7 @@ async function getProductsByCategory (req, res) {
   }
 }
 
+// Create a new category
 async function createCategory (req, res) {
     try {
     const newCategory = new Category(req.body)

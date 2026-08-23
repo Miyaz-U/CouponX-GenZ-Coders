@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CouponX Admin Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+<body class="bg-[#080b16] text-white">
+
+    <!-- MOBILE OVERLAY -->
+    <div id="overla" class="fixed inset-0 bg-black/60 z-30 hidden lg:hidden"></div>
+
+    <!-- SIDEBAR -->
+    <aside id="sidebar" class="fixed left-0 top-0 h-screen w-64 bg-[#0d1120] border-r border-gray-800 z-40 transform -translate-x-full lg:translate-x-0 transition-transform duration-300">
+        <div class="p-6">
+            <h1 class="text-2xl font-bold">Coupon<span class="text-purple-500">X</span></h1>
+            <p class="text-gray-500 text-xs mt-1">Admin Portal</p>
+        </div>
+        <nav class="px-4 space-y-2">
+            <a href="dashboard.html" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-purple-600 text-white">
+                <i class="fa-solid fa-chart-line"></i>
+                Dashboard
+            </a>
+            <a href="coupons.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:bg-gray-800">
+                <i class="fa-solid fa-ticket"></i>
+                Coupons
+            </a>
+            <a href="orders.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:bg-gray-800">
+                <i class="fa-solid fa-cart-shopping"></i>
+                Orders
+            </a>
+            <a href="customers.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:bg-gray-800">
+                <i class="fa-solid fa-users"></i>
+                Customers
+            </a>
+        </nav>
+        <div class="absolute bottom-5 left-4 right-4">
+            <button id="logoutBtn" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:bg-gray-800">
+                <i class="fa-solid fa-right-from-bracket"></i>
+                Logout
+            </button>
+        </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="lg:ml-64">
+
+        <!-- HEADER -->
+        <header class="h-20 px-5 md:px-8 flex items-center justify-between border-b border-gray-800 bg-[#080b16]">
+            <div class="flex items-center gap-4">
+                <button id="menuBtn" class="lg:hidden text-xl">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+                <div>
+                    <h2 class="text-xl md:text-2xl font-bold">Dashboard</h2>
+                    <p class="text-gray-500 text-sm">Welcome back, Admin</p>
+                </div>
+            </div>
+            <div class="relative">
+                <button id="profileBtn" class="w-10 h-10 rounded-full bg-purple-600 flex items-center justify-center hover:bg-purple-700 transition">
+                    <i class="fa-solid fa-user"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- CONTENT -->
+        <section class="p-5 md:p-8">
+
+            <!-- STATS -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
+
+                <!-- TOTAL -->
+                <div class="bg-[#111625] border border-gray-800 rounded-2xl p-5">
+                    <div class="flex justify-between">
+                        <div>
+                            <p class="text-gray-400 text-sm">Total Coupons</p>
+                            <h3 id="totalCoupons" class="text-3xl font-bold mt-2">0</h3>
+                        </div>
+                        <div class="w-12 h-12 rounded-xl bg-purple-600/20 text-purple-400 flex items-center justify-center">
+                            <i class="fa-solid fa-ticket"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ACTIVE -->
+                <div class="bg-[#111625] border border-gray-800 rounded-2xl p-5">
+                    <div class="flex justify-between">
+                        <div>
+                            <p class="text-gray-400 text-sm">Active Coupons</p>
+                            <h3 id="activeCoupons" class="text-3xl font-bold mt-2">0</h3>
+                        </div>
+                        <div class="w-12 h-12 rounded-xl bg-green-500/20 text-green-400 flex items-center justify-center">
+                            <i class="fa-solid fa-circle-check"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- EXPIRED -->
+                <div class="bg-[#111625] border border-gray-800 rounded-2xl p-5">
+                    <div class="flex justify-between">
+                        <div>
+                            <p class="text-gray-400 text-sm">Expired Coupons</p>
+                            <h3 id="expiredCoupons" class="text-3xl font-bold mt-2">0</h3>
+                        </div>
+                        <div class="w-12 h-12 rounded-xl bg-red-500/20 text-red-400 flex items-center justify-center">
+                            <i class="fa-solid fa-clock"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- USAGE -->
+                <div class="bg-[#111625] border border-gray-800 rounded-2xl p-5">
+                    <div class="flex justify-between">
+                        <div>
+                            <p class="text-gray-400 text-sm">Total Usage</p>
+                            <h3 id="totalUsage" class="text-3xl font-bold mt-2">0</h3>
+                        </div>
+                        <div class="w-12 h-12 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center">
+                            <i class="fa-solid fa-users"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CHART + TOP COUPONS -->
+            <div class="grid grid-cols-1 xl:grid-cols-3 gap-5 mt-6">
+
+                <!-- CHART -->
+                <div class="xl:col-span-2 bg-[#111625] border border-gray-800 rounded-2xl p-5">
+                    <div class="flex justify-between mb-5">
+                        <div>
+                            <h3 class="font-semibold text-lg">Coupon Usage</h3>
+                            <p class="text-gray-500 text-sm">Coupon performance overview</p>
+                        </div>
+                    </div>
+                    <div class="h-72">
+                        <canvas id="couponChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- TOP COUPONS -->
+                <div class="bg-[#111625] border border-gray-800 rounded-2xl p-5">
+                    <h3 class="font-semibold text-lg">Top Coupons</h3>
+                    <p class="text-gray-500 text-sm mb-5">Most used coupons</p>
+                    <div id="topCoupons" class="space-y-4">
+                        <p class="text-gray-500 text-sm">Loading...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RECENT COUPONS -->
+            <div class="bg-[#111625] border border-gray-800 rounded-2xl mt-6 overflow-hidden">
+                <div class="p-5 flex items-center justify-between">
+                    <div>
+                        <h3 class="font-semibold text-lg">Recent Coupons</h3>
+                        <p class="text-gray-500 text-sm">Recently created coupons</p>
+                    </div>
+                    <a href="create-coupon.html" class="px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg text-sm">+ Create Coupon</a>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-[#0d1120] text-gray-400 text-sm">
+                            <tr>
+                                <th class="text-left px-5 py-4">Code</th>
+                                <th class="text-left px-5 py-4">Discount</th>
+                                <th class="text-left px-5 py-4">Minimum Purchase</th>
+                                <th class="text-left px-5 py-4">Valid Till</th>
+                                <th class="text-left px-5 py-4">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="couponTable" class="divide-y divide-gray-800">
+                            <tr>
+                                <td colspan="5" class="text-center text-gray-500 py-8">Loading coupons...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+    <script src="/js/adminAuth.js"></script>
+    <script src="/js/adminProfile.js"></script>
+    <script src="/js/dashboard.js"></script>
+</body>
+</html>

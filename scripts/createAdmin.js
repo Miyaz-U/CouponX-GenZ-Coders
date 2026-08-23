@@ -15,7 +15,9 @@ dotenv.config({ path: path.join(__dirname, "../.env") })
 const ADMIN_DETAILS = {
   name: "[NAME]",
   email: "[EMAIL_ADDRESS]",
-  password: "[PASSWORD]"
+  password: "[PASSWORD]",
+  mobile: "[MOBILE_NUMBER]",
+  address: "[ADDRESS]"
 }
 
 const User = require("../models/User")
@@ -39,6 +41,8 @@ mongoose.connect(process.env.MONGODB_URI).then(async function () {
     name: ADMIN_DETAILS.name,
     email: ADMIN_DETAILS.email,
     password: ADMIN_DETAILS.password,
+    mobile: ADMIN_DETAILS.mobile,
+    address: ADMIN_DETAILS.address,
     role: "admin"
   })
   await admin.save()
@@ -46,6 +50,8 @@ mongoose.connect(process.env.MONGODB_URI).then(async function () {
   console.log("Admin account created successfully!")
   console.log("  Email:", ADMIN_DETAILS.email)
   console.log("  Password:", ADMIN_DETAILS.password)
+  console.log("  Mobile:", ADMIN_DETAILS.mobile)
+  console.log("  Address:", ADMIN_DETAILS.address)
   mongoose.disconnect()
 }).catch(function (err) {
   console.log("Error:", err)

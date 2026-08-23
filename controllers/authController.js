@@ -1,5 +1,6 @@
 const User = require("../models/User")
 
+// Register a new user
 async function register (req, res) {
     try {
     const { name, email, password, mobile, address, role } = req.body
@@ -29,6 +30,7 @@ async function register (req, res) {
   }
 }
 
+// Login a user
 async function login (req, res) {
     try {
     const { email, password } = req.body
@@ -51,6 +53,7 @@ async function login (req, res) {
   }
 }
 
+// Reset password for a user
 async function resetPassword (req, res) {
     try {
     const { email, newPassword } = req.body
@@ -72,6 +75,7 @@ async function resetPassword (req, res) {
   }
 }
 
+// Get profile of a user
 async function getProfile (req, res) {
     try {
     const { email } = req.query

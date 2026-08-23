@@ -90,7 +90,7 @@ loginForm.addEventListener("submit", function (event) {
       if (result.status === 200) {
         localStorage.setItem("couponx_user", JSON.stringify(result.body.user))
         if (result.body.user.role === "admin") {
-          window.location.href = "admin-dashboard-placeholder.html"
+          window.location.href = "dashboard.html"
         } else {
           window.location.href = "home.html"
         }

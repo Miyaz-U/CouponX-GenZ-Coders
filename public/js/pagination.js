@@ -1,4 +1,3 @@
-// pagination.js — shared pagination helpers
 // Used by: home.js, shop.js, deals.js
 //
 // Provides two functions:

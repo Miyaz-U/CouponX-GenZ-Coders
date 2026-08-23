@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CouponX - Customers</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+<body class="bg-[#0b0b14] text-white min-h-screen">
+    <aside class="hidden lg:block fixed left-0 top-0 w-64 h-screen bg-[#12121d] border-r border-white/10">
+        <div class="p-6">
+            <h1 class="text-2xl font-bold">Coupon<span class="text-purple-400">X</span></h1>
+            <p class="text-xs text-gray-500">Admin Portal</p>
+        </div>
+        <nav class="px-4 space-y-2">
+            <a href="/dashboard.html" class="block px-4 py-3 text-gray-400 rounded-xl hover:bg-white/5">▦ Dashboard</a>
+            <a href="/coupons.html" class="block px-4 py-3 text-gray-400 rounded-xl hover:bg-white/5">🎟 Coupons</a>
+            <a href="/orders.html" class="block px-4 py-3 text-gray-400 rounded-xl hover:bg-white/5">🛒 Orders</a>
+            <a href="/customers.html" class="block px-4 py-3 bg-purple-600/10 text-purple-400 rounded-xl">👥 Customers</a>
+        </nav>
+        <div class="absolute bottom-5 left-4 right-4">
+            <button id="logoutBtn" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:bg-gray-800">
+                <i class="fa-solid fa-right-from-bracket"></i>
+                Logout
+            </button>
+        </div>
+    </aside>
+    <main class="lg:ml-64">
+        <header class="h-20 border-b border-white/10 flex items-center px-5 sm:px-8">
+            <div>
+                <h2 class="text-2xl font-bold">Customers</h2>
+                <p class="text-gray-500 text-sm">Manage registered customers</p>
+            </div>
+            <div class="ml-auto relative">
+                <button id="profileBtn" class="w-10 h-10 rounded-full bg-purple-600 flex items-center justify-center hover:bg-purple-700 transition">
+                    <i class="fa-solid fa-user"></i>
+                </button>
+            </div>
+        </header>
+        <section class="p-5 sm:p-8">
+            <div class="bg-[#12121d] border border-white/10 rounded-2xl overflow-hidden">
+                <div class="p-6">
+                    <h3 class="text-lg font-semibold">All Customers</h3>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full min-w-[700px]">
+                        <thead class="border-y border-white/10"
+                            <tr>
+                                <th class="px-6 py-4 text-left text-gray-500">Name</th>
+                                <th class="px-6 py-4 text-left text-gray-500">Email</th>
+                                <th class="px-6 py-4 text-left text-gray-500">Phone</th>
+                                <th class="px-6 py-4 text-left text-gray-500">Joined</th>
+                            </tr>
+                        </thead>
+                        <tbody id="customersTable">
+                            <tr>
+                                <td colspan="4" class="text-center py-12 text-gray-500">Loading...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+    <script src="/js/adminAuth.js"></script>
+    <script src="/js/adminProfile.js"></script>
+    <script src="/js/customers.js"></script>
+</body>
+</html>
