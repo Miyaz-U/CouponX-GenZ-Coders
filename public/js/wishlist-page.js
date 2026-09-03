@@ -42,7 +42,7 @@ function renderWishlistPage() {
       : { rating: 4.5, reviewCount: 88 };
     const starsHtml = typeof renderStars === "function"
       ? renderStars(ratingInfo.rating)
-      : "?????";
+      : "★★★★★";
 
     const hasImage = !!product.image;
 
@@ -62,12 +62,12 @@ function renderWishlistPage() {
 
     const priceHtml = showDealPrice
       ? '<div class="flex items-baseline gap-2 mb-3">' +
-        '  <span class="text-lg font-bold text-gray-900 leading-tight">?' + product.dealPrice.toLocaleString("en-IN") + '</span>' +
-        '  <span class="text-xs text-gray-400 line-through">?' + product.price.toLocaleString("en-IN") + '</span>' +
+        '  <span class="text-lg font-bold text-gray-900 leading-tight">₹' + product.dealPrice.toLocaleString("en-IN") + '</span>' +
+        '  <span class="text-xs text-gray-400 line-through">₹' + product.price.toLocaleString("en-IN") + '</span>' +
         '  <span class="text-[11px] font-semibold text-green-600 bg-green-50 px-1.5 py-0.5 rounded">Deal</span>' +
         '</div>'
       : '<div class="flex items-baseline gap-2 mb-3">' +
-        '  <span class="text-lg font-bold text-gray-900 leading-tight">?' + product.price.toLocaleString("en-IN") + '</span>' +
+        '  <span class="text-lg font-bold text-gray-900 leading-tight">₹' + product.price.toLocaleString("en-IN") + '</span>' +
         '</div>';
 
     card.innerHTML =
@@ -81,7 +81,7 @@ function renderWishlistPage() {
       priceHtml +
       '<div class="mt-auto pt-2 border-t border-gray-100 flex flex-col gap-2">' +
       '  <button class="moveToCartBtn w-full flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 text-white text-xs font-semibold py-2 px-3 rounded-lg transition shadow-sm">' +
-      '    ?? Move to Cart' +
+      '    🛒 Move to Cart' +
       '  </button>' +
       '  <button class="removeCardTextBtn w-full text-center text-xs text-gray-400 hover:text-red-500 py-1 transition">' +
       '    Remove' +
@@ -113,7 +113,7 @@ function renderWishlistPage() {
       });
       removeFromWishlist(product._id || product.id);
       renderWishlistPage();
-      showToast("Moved to cart ?");
+      showToast("Moved to cart 🛒");
     });
 
     // Remove actions
@@ -155,7 +155,7 @@ if (moveAllToCartBtn) {
 
     clearWishlist();
     renderWishlistPage();
-    showToast("All items moved to cart! ??");
+    showToast("All items moved to cart! 🛒");
     if (typeof openCart === "function") {
       openCart();
     }

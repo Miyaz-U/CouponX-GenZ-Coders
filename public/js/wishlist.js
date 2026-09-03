@@ -63,7 +63,7 @@ function toggleWishlist(product) {
   saveWishlist(list);
 
   if (typeof showToast === "function") {
-    showToast(added ? "Added to Wishlist ??" : "Removed from Wishlist");
+    showToast(added ? "Added to Wishlist ❤️" : "Removed from Wishlist");
   }
 
   return added;
