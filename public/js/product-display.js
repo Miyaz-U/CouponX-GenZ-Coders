@@ -60,6 +60,7 @@ function buildProductCard(product, options) {
   const showDealPrice = product.isDeal && product.dealPrice;
   const tileStyle = getCategoryTileStyle(product.category);
   const { rating, reviewCount } = getProductRating(product);
+  const hasImage = Boolean(product.image);
   const wishlisted = typeof isInWishlist === "function" ? isInWishlist(product._id) : false;
   const heartSvg = typeof getHeartSvg === "function"
     ? getHeartSvg(wishlisted)
