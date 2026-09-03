@@ -191,13 +191,26 @@ function renderCategoryProducts(products) {
     const showDealPrice = product.isDeal && product.dealPrice;
     const tileStyle = getCategoryTileStyle(product.category);
     const { rating, reviewCount } = getProductRating(product);
-    const hasImage = !!product.image;
+    const wishlisted = typeof isInWishlist === "function" ? isInWishlist(product._id) : false;
+    const heartSvg = typeof getHeartSvg === "function"
+      ? getHeartSvg(wishlisted)
+      : (wishlisted ? "❤️" : "🤍");
+
+    const wishlistBtnHtml =
+      '<button type="button" class="wishlistBtn group absolute top-1.5 right-1.5 sm:top-2 sm:right-2 w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-white/90 hover:bg-white shadow-sm hover:shadow flex items-center justify-center transition-all duration-200 z-10 focus:outline-none" ' +
+      'data-id="' + product._id + '" ' +
+      'title="' + (wishlisted ? "Remove from Wishlist" : "Add to Wishlist") + '" ' +
+      'aria-label="' + (wishlisted ? "Remove from Wishlist" : "Add to Wishlist") + '">' +
+      heartSvg +
+      '</button>';
 
     const imageTileHtml = hasImage
-      ? '<div class="h-16 sm:h-28 bg-gray-50 rounded-md mb-2 sm:mb-3 overflow-hidden flex items-center justify-center">' +
+      ? '<div class="relative h-16 sm:h-28 bg-gray-50 rounded-md mb-2 sm:mb-3 overflow-hidden flex items-center justify-center">' +
+        wishlistBtnHtml +
         '  <img src="' + product.image + '" alt="' + product.name + '" class="productImg w-full h-full object-contain" />' +
         '</div>'
-      : '<div class="h-16 sm:h-28 ' + tileStyle.bg + ' border-2 border-dashed border-gray-300 rounded-md mb-2 sm:mb-3 flex items-center justify-center text-center px-1 sm:px-2">' +
+      : '<div class="relative h-16 sm:h-28 ' + tileStyle.bg + ' border-2 border-dashed border-gray-300 rounded-md mb-2 sm:mb-3 flex items-center justify-center text-center px-1 sm:px-2">' +
+        wishlistBtnHtml +
         '  <span class="text-[9px] sm:text-xs text-gray-400 leading-tight">Product image<br/>placeholder</span>' +
         '</div>';
 
@@ -225,10 +238,31 @@ function renderCategoryProducts(products) {
       const imgEl = card.querySelector(".productImg");
       imgEl.addEventListener("error", function () {
         const tile = imgEl.parentElement;
-        tile.innerHTML = '<span class="text-xs text-gray-400 text-center px-2">Image not found</span>';
+        tile.innerHTML = wishlistBtnHtml + '<span class="text-xs text-gray-400 text-center px-2">Image not found</span>';
         tile.classList.remove("bg-gray-50");
         tile.classList.add(tileStyle.bg, "border-2", "border-dashed", "border-gray-300");
+        const refoundBtn = tile.querySelector(".wishlistBtn");
+        if (refoundBtn) {
+          refoundBtn.addEventListener("click", handleCategoryWishlistClick);
+        }
       });
+    }
+
+    function handleCategoryWishlistClick(e) {
+      e.stopPropagation();
+      if (typeof toggleWishlist === "function") {
+        const isNowWishlisted = toggleWishlist(product);
+        const btn = card.querySelector(".wishlistBtn");
+        if (btn) {
+          btn.innerHTML = typeof getHeartSvg === "function" ? getHeartSvg(isNowWishlisted) : (isNowWishlisted ? "❤️" : "🤍");
+          btn.setAttribute("title", isNowWishlisted ? "Remove from Wishlist" : "Add to Wishlist");
+        }
+      }
+    }
+
+    const wishlistBtn = card.querySelector(".wishlistBtn");
+    if (wishlistBtn) {
+      wishlistBtn.addEventListener("click", handleCategoryWishlistClick);
     }
 
     const addBtn = card.querySelector(".addToCartBtn");

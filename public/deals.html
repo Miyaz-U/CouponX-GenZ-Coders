@@ -11,12 +11,22 @@
         <div class="w-full flex items-center justify-between px-6 lg:px-12 py-4">
             <a href="home.html" class="text-xl font-bold text-purple-600">CouponX</a>
             <nav class="hidden md:flex gap-6 text-sm font-medium text-gray-700">
-                <a href="home.html" class="hover:text-purple-600">Home</a>
-                <a href="shop.html" class="hover:text-purple-600">Shop</a>
-                <a href="categories.html" class="hover:text-purple-600">Categories</a>
-                <a href="deals.html" class="text-purple-600">Deals</a>
+                <a href="home.html" class="hover:text-purple-600 transition">Home</a>
+                <a href="shop.html" class="hover:text-purple-600 transition">Shop</a>
+                <a href="categories.html" class="hover:text-purple-600 transition">Categories</a>
+                <a href="deals.html" class="text-purple-600 font-semibold">Deals</a>
+                <a href="wishlist.html" class="hover:text-purple-600 transition flex items-center gap-1.5">
+                    <span>Wishlist</span>
+                    <span id="desktopNavWishlistBadge" class="hidden text-[11px] bg-pink-100 text-pink-700 font-bold px-1.5 py-0.2 rounded-full">0</span>
+                </a>
             </nav>
             <div class="flex items-center gap-4">
+                <a href="wishlist.html" id="wishlistIconBtn" class="relative text-gray-700 hover:text-purple-600 transition p-1" title="Wishlist">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                    </svg>
+                    <span id="wishlistCount" class="absolute -top-1.5 -right-2 bg-pink-500 text-white text-xs rounded-full px-1.5 min-w-[1.25rem] text-center font-bold">0</span>
+                </a>
                 <button id="cartIconBtn" class="relative text-gray-700">
                     🛒
                     <span id="cartCount" class="absolute -top-2 -right-3 bg-purple-600 text-white text-xs rounded-full px-1.5">0</span>
@@ -32,6 +42,12 @@
                             <div><span class="font-medium text-gray-500">Email:</span> <span id="profileEmail">—</span></div>
                             <div><span class="font-medium text-gray-500">Mobile:</span> <span id="profileMobile">—</span></div>
                             <div><span class="font-medium text-gray-500">Address:</span> <span id="profileAddress">—</span></div>
+                        </div>
+                        <div class="border-t border-gray-100 pt-3 mt-3">
+                            <a href="wishlist.html" class="flex items-center justify-between text-sm font-medium text-purple-600 hover:text-purple-700 py-1.5 px-2 rounded-lg hover:bg-purple-50 transition">
+                                <span class="flex items-center gap-2">❤️ My Wishlist</span>
+                                <span id="profileWishlistCount" class="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full font-semibold">0 items</span>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -49,7 +65,11 @@
             <a href="home.html" class="py-2 hover:text-purple-600">Home</a>
             <a href="shop.html" class="py-2 hover:text-purple-600">Shop</a>
             <a href="categories.html" class="py-2 hover:text-purple-600">Categories</a>
-            <a href="deals.html" class="py-2 text-purple-600">Deals</a>
+            <a href="deals.html" class="py-2 text-purple-600 font-semibold">Deals</a>
+            <a href="wishlist.html" class="py-2 hover:text-purple-600 flex items-center justify-between">
+                <span>Wishlist</span>
+                <span id="mobileWishlistCount" class="bg-pink-100 text-pink-700 text-xs px-2 py-0.5 rounded-full font-medium">0</span>
+            </a>
         </nav>
     </header>
 
@@ -166,6 +186,7 @@
         class="pointer-events-none fixed bottom-4 left-1/2 z-[60] -translate-x-1/2 rounded-lg bg-gray-900 px-4 py-2 text-xs font-medium text-white opacity-0 shadow-lg transition-all">
     </div>
     <script src="js/cart.js"></script>
+    <script src="js/wishlist.js"></script>
     <script src="js/product-display.js"></script>
     <script src="js/account.js"></script>
     <script src="js/pagination.js"></script>
