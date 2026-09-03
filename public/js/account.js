@@ -44,6 +44,9 @@ if (logoutBtn) {
     const isHidden = profileDropdown.classList.contains("hidden");
     if (isHidden) {
       loadProfile();
+      if (typeof updateWishlistBadges === "function") {
+        updateWishlistBadges();
+      }
       profileDropdown.classList.remove("hidden");
     } else {
       profileDropdown.classList.add("hidden");

@@ -13,6 +13,7 @@ const productRoutes = require("./routes/productRoutes")
 const couponRoutes = require("./routes/couponRoutes")
 const orderRoutes = require("./routes/orderRoutes")
 const customerRoutes = require("./routes/customerRoutes")
+const wishlistRoutes = require("./routes/wishlistRoutes")
 
 const app = express()
 const PORT = process.env.PORT || 3000
@@ -31,6 +32,7 @@ app.use("/api/products", productRoutes)
 app.use("/api/coupons", couponRoutes)
 app.use("/api/orders", orderRoutes)
 app.use("/api/customers", customerRoutes)
+app.use("/api/wishlist", wishlistRoutes)
 
 // HOME PAGE REDIRECT
 app.get("/", (req, res) => {
